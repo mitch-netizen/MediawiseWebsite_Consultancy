@@ -1,0 +1,102 @@
+/* Color Palette */
+:root {
+  /* Primary Colors */
+  --gold: #D8C38A;
+  --gold-light: #ede0b8;
+  --teal: #00B4A0;
+  --teal-mid: #02AAAD;
+  --teal-dark: #008f7e;
+
+  /* Backgrounds */
+  --navy: #101820;
+  --navy-mid: #162030;
+  --navy-light: #1e2d40;
+  --text-dark: #080e14;
+  --off-white: #f0ece6;
+  --white: #FFFFFF;
+
+  /* Spacing Scale */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 2.5rem;
+  --spacing-2xl: 4rem;
+
+  /* Typography */
+  --font-display: "Bebas Neue", sans-serif;
+  --font-serif: "Fraunces", serif;
+  --font-body: "DM Sans", sans-serif;
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 3rem;
+  --text-5xl: 4rem;
+
+  /* Font Weights */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-bold: 700;
+
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Z-Index Scale */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 500;
+  --z-modal-backdrop: 900;
+  --z-modal: 950;
+  --z-popover: 1000;
+  --z-tooltip: 1100;
+  --z-progress: 9999;
+  --z-cursor: 9999;
+}
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: var(--font-light);
+  background: var(--navy);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Smooth scrolling for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

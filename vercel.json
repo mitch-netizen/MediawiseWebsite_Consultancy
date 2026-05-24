@@ -1,12 +1,4 @@
 {
-  "buildCommand": "",
-  "installCommand": "",
-  "framework": null,
-  "public": true,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "buildCommand": "next build",
+  "outputDirectory": ".next"
 }

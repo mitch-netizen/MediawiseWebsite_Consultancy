@@ -1,19 +1,21 @@
 /* Color Palette */
 :root {
   /* Primary Colors */
-  --gold: #D8C38A;
+  --gold: #d8c38a;
   --gold-light: #ede0b8;
-  --teal: #00B4A0;
-  --teal-mid: #02AAAD;
-  --teal-dark: #008f7e;
+  --teal: #02d8be;
+  --teal-mid: #02d8be;
+  --teal-dark: #01a899;
 
   /* Backgrounds */
-  --navy: #101820;
-  --navy-mid: #162030;
-  --navy-light: #1e2d40;
+  --navy: #223447;
+  --navy-mid: #1a3a3a;
+  --navy-light: #2d4654;
   --text-dark: #080e14;
-  --off-white: #f0ece6;
+  --off-white: #f4eded4;
   --white: #FFFFFF;
+  --blue-accent: #0097e0;
+  --light-gray: #a8b8bb;
 
   /* Spacing Scale */
   --spacing-xs: 0.5rem;

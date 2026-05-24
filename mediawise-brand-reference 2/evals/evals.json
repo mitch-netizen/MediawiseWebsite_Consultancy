@@ -1,0 +1,35 @@
+{
+  "skill_name": "mediawise-brand-reference",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm redesigning the Mediawise website homepage and I need to pick a color scheme for the hero section. What colors should I use for the background, text, and call-to-action button? Also, where's the logo file I should use?",
+      "expected_output": "Provide hex codes for background (#223447), text (#ffffff), and CTA button (#02d8be). Reference the logo location and recommend using Primary Dark version.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm writing an email to a prospect about Mediawise's embedded marketing leadership service. I want to make sure I'm using the right tone and not falling into corporate jargon. Can you review my opening line and help me rewrite it to match the brand voice?",
+      "expected_output": "Explain brand voice attributes (direct, honest, specific, personal), provide examples of good vs bad language, and help rewrite with specific tone guidance.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need to create a LinkedIn post announcing Mediawise's Q2 results. What brand messaging should I use? Also, what's the official color palette if I'm including any graphics or design elements?",
+      "expected_output": "Reference results-first messaging framework, provide example opening statements, list all hex codes, and remind about specific metrics/outcomes rather than vague language.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I'm preparing a client deck and need to make sure the logo is sized correctly and positioned properly. What's the minimum size, and which logo file should I use if the background is light colored?",
+      "expected_output": "Specify minimum 64px height for digital, reference Secondary Light logo files, explain clear space requirements (20px minimum), and explain when to use which version.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Writing a case study about Mediawise's work with SCA. I want to make sure I'm following the brand voice and highlighting the right aspects. What should I focus on?",
+      "expected_output": "Reference results-first framework, emphasize execution over strategy, use specific metrics, avoid vague language, maintain personal tone, and explain how to structure the narrative.",
+      "files": []
+    }
+  ]
+}

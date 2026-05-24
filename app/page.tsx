@@ -48,27 +48,27 @@ export default function Home() {
       ></div>
 
       {/* Navigation */}
-      <header className="fixed top-0 left-0 right-0 bg-[rgba(16,24,32,0.95)] backdrop-blur-[10px] z-50 border-b border-[rgba(216,195,138,0.1)]">
+      <header className="fixed top-0 left-0 right-0 bg-[rgba(34,52,71,0.95)] backdrop-blur-[10px] z-50 border-b border-[rgba(2,216,190,0.15)]">
         <nav className="max-w-6xl mx-auto px-8 py-6 flex justify-between items-center">
-          <a href="#" className="font-display text-2xl font-bold text-gold">
+          <a href="#" className="font-display text-2xl font-bold text-teal">
             MEDIAWISE
           </a>
           <div className="flex gap-8 list-none">
             <a
               href="#about"
-              className="text-off-white text-sm font-medium uppercase tracking-wider hover:text-gold transition-colors"
+              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
             >
               About
             </a>
             <a
               href="#services"
-              className="text-off-white text-sm font-medium uppercase tracking-wider hover:text-gold transition-colors"
+              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
             >
               Services
             </a>
             <a
               href="#contact"
-              className="text-off-white text-sm font-medium uppercase tracking-wider hover:text-gold transition-colors"
+              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
             >
               Contact
             </a>
@@ -84,74 +84,139 @@ export default function Home() {
           className="min-h-screen flex items-center pt-24 px-8"
         >
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-5xl font-bold font-display mb-6 animate-fadeUp">
-              Marketing & Revenue <span className="text-gold">Strategy</span>
+            <h1 className="text-6xl font-bold font-display mb-6 animate-fadeUp uppercase text-white">
+              Revenue Strategy <span className="text-teal">That Moves</span>
             </h1>
-            <p className="text-xl text-off-white max-w-2xl mx-auto mb-8 animate-fadeUp">
-              Transforming businesses through strategic marketing and proven
-              revenue generation methods.
+            <p className="text-xl text-white max-w-2xl mx-auto mb-8 animate-fadeUp leading-relaxed">
+              I help regional and growth-stage businesses build marketing strategy, grow revenue, and fix the systems holding them back — without the cost of a full-time executive.
             </p>
-            <button className="btn btn-primary">Get Started</button>
+            <button className="btn btn-primary">WORK WITH ME</button>
           </div>
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 px-8 bg-navy-mid">
+        <section id="about" className="py-20 px-8">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold font-display mb-8 text-gold">
-              About
+            <h2 className="text-5xl font-bold font-display mb-12 text-white uppercase">
+              A Decade of Execution
             </h2>
-            <p className="text-lg text-off-white leading-relaxed max-w-3xl">
-              With years of experience in marketing strategy and business
-              growth, I help companies unlock their revenue potential through
-              data-driven insights and strategic planning.
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div>
+                <p className="text-lg text-white leading-relaxed mb-6">
+                  I'm not a consultant who advises from the sidelines. I work <span className="text-teal font-bold">embedded inside your business</span>, owning outcomes and reporting directly to you.
+                </p>
+                <p className="text-lg text-white leading-relaxed mb-6">
+                  With a decade running real revenue functions, I've built campaign strategies, performance systems, and teams that deliver measurable results. I focus on what actually works in commercial reality, not what looks good in frameworks.
+                </p>
+              </div>
+              <div>
+                <div className="space-y-4">
+                  <div className="border-l-4 border-teal pl-6 py-2">
+                    <p className="text-lg font-bold text-teal">Strategy + Execution</p>
+                    <p className="text-white">Revenue strategy isn't a PowerPoint deck—it's embedded execution turning insight into repeatable systems.</p>
+                  </div>
+                  <div className="border-l-4 border-teal pl-6 py-2">
+                    <p className="text-lg font-bold text-teal">Systems-Based Approach</p>
+                    <p className="text-white">Most businesses leak time through broken processes. I design automation and workflows that actually get used.</p>
+                  </div>
+                  <div className="border-l-4 border-teal pl-6 py-2">
+                    <p className="text-lg font-bold text-teal">Regional Expertise</p>
+                    <p className="text-white">Based in Central Queensland. Working with clients across Australia. Direct, honest, and focused on outcomes.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Services Section */}
         <section id="services" className="py-20 px-8">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold font-display mb-12 text-gold">
+            <h2 className="text-5xl font-bold font-display mb-12 text-white uppercase">
               Services
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {["Strategy", "Growth", "Optimization", "Analytics", "Planning", "Execution"].map(
-                (service, i) => (
-                  <div key={i} className="card">
-                    <h3 className="text-xl font-bold mb-4">{service}</h3>
-                    <p className="text-off-white">
-                      Professional service offerings designed for business
-                      growth.
-                    </p>
-                  </div>
-                )
-              )}
+              {[
+                {
+                  title: "Embedded Marketing Leadership",
+                  desc: "Strategy, campaigns, and team leadership embedded in your business."
+                },
+                {
+                  title: "Revenue Growth Consulting",
+                  desc: "Sales systems, pipeline management, and forecasting for consistent growth."
+                },
+                {
+                  title: "Workflow & Systems Design",
+                  desc: "Salesforce, Power Automate, and Smartsheet automation that actually gets used."
+                },
+                {
+                  title: "Marketing Strategy",
+                  desc: "Brand positioning, digital strategy, and campaign architecture."
+                },
+                {
+                  title: "Sales Team Development",
+                  desc: "Coaching, onboarding, and performance systems for high-performing teams."
+                },
+                {
+                  title: "Business Improvement",
+                  desc: "Process optimization, change management, and operational efficiency."
+                }
+              ].map((service, i) => (
+                <div key={i} className="card border-teal/30 hover:border-teal">
+                  <h3 className="text-lg font-bold mb-4 text-white uppercase">{service.title}</h3>
+                  <p className="text-white">
+                    {service.desc}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-8 bg-navy-mid">
+        <section id="contact" className="py-20 px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl font-bold font-display mb-8 text-gold">
-              Let's Work Together
+            <h2 className="text-5xl font-bold font-display mb-8 text-white uppercase">
+              Let's Talk Strategy
             </h2>
-            <p className="text-lg text-off-white mb-8 max-w-2xl mx-auto">
-              Ready to transform your business? Get in touch and let's discuss
-              your marketing strategy.
+            <p className="text-lg text-white mb-8 max-w-2xl mx-auto leading-relaxed">
+              Whether you're looking to build marketing strategy, grow revenue, or fix broken systems, I'll give you straight talk on what'll actually work for your business.
             </p>
-            <button className="btn btn-secondary">Contact Me</button>
+            <div className="space-y-4">
+              <button className="btn btn-primary">START A CONVERSATION</button>
+              <p className="text-sm text-white/70">
+                Response within one business day. No obligation, no jargon.
+              </p>
+            </div>
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-navy-mid border-t border-[rgba(216,195,138,0.1)] py-12 px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-off-white text-sm">
-            © 2024 Mitch Harris. All rights reserved.
-          </p>
+      <footer className="bg-navy border-t border-teal/20 py-12 px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div>
+              <h3 className="text-teal font-bold mb-4">Mitch Harris</h3>
+              <p className="text-white text-sm">Marketing & Revenue Strategist</p>
+              <p className="text-white/70 text-sm">Central Queensland, Australia</p>
+            </div>
+            <div>
+              <h3 className="text-teal font-bold mb-4">Contact</h3>
+              <p className="text-white text-sm">Email: mitch.harris@outlook.com.au</p>
+              <p className="text-white text-sm">Phone: +61 409 265 711</p>
+            </div>
+            <div>
+              <h3 className="text-teal font-bold mb-4">Connect</h3>
+              <p className="text-white text-sm">LinkedIn: linkedin.com/in/mitch-harris-consultant</p>
+              <p className="text-white/70 text-sm">Australia-wide service</p>
+            </div>
+          </div>
+          <div className="border-t border-teal/20 pt-8 text-center">
+            <p className="text-white text-sm">
+              © 2026 Mitch Harris - Mediawise Solutions. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </>

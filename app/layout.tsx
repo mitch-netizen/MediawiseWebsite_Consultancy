@@ -78,7 +78,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#101820" />
+        <meta name="theme-color" content="#223447" />
         <StructuredData />
       </head>
       <body>

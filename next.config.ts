@@ -7,4 +7,6 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: ".",
 };
 
+// Domain routing configured for mediawisesolutions.com.au
+
 export default nextConfig;

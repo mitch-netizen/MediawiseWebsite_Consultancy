@@ -7,15 +7,15 @@ import { BOOKING_URL, areas } from "../lib/content";
 const serviceLinks = [
   ...areas.map((a) => ({ href: `/services/${a.slug}`, label: a.name, note: a.stages, tone: a.tone })),
   { href: "/automation", label: "Automation builds", note: "Five fixed price fixes", tone: "blue" },
+  { href: "/pricing", label: "Automation pricing", note: "Setup, bundles and care plans", tone: "blue" },
 ];
 
 const links = [
-  { href: "/who-its-for", label: "Who it's for" },
   { href: "/how-it-works", label: "How it works" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
+const mobileExtra = [{ href: "/who-its-for", label: "Who it's for" }];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -53,7 +53,7 @@ export default function Header() {
           {links.map((l) => (
             <Link key={l.href} href={l.href}>{l.label}</Link>
           ))}
-          <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a chat</a>
+          <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a call</a>
         </nav>
         <button className="menu-toggle" aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(!open)}>
           {open ? "Close" : "Menu"}
@@ -63,7 +63,7 @@ export default function Header() {
         {serviceLinks.map((s) => (
           <Link key={s.href} href={s.href} className={`m-svc tone-${s.tone}`} onClick={() => setOpen(false)}>{s.label}</Link>
         ))}
-        {links.map((l) => (
+        {[...mobileExtra, ...links].map((l) => (
           <Link key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</Link>
         ))}
         <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>

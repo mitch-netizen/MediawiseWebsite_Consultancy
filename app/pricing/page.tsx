@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import { pageMeta } from "../lib/seo";
 import Link from "next/link";
 import { offers, bundles, aud } from "../lib/content";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = {
-  title: "Pricing and how it works",
-  description: "Fixed setup prices for each automation, bundles, optional care plans and the 2 to 3 week process. All prices in AUD plus GST.",
-};
+export const metadata: Metadata = pageMeta("/pricing", "Automation Pricing", "Fixed setup prices for the five automation builds, bundles, optional care plans and payment terms. All prices in AUD plus GST. Marketing and sales work is bespoke and quoted to suit.");
 
 export default function Pricing() {
   return (
     <>
-      <section className="hero dots">
+      <section className="hero">
         <div className="container">
           <span className="eyebrow">Pricing and how it works</span>
           <h1>Automation pricing. No surprises.</h1>

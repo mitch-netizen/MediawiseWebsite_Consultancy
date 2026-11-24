@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
+import { pageMeta } from "../lib/seo";
 import { BOOKING_URL, EMAIL, PHONE, PHONE_HREF, ENQUIRY_FORM_URL } from "../lib/content";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Book a 20 minute chat or send an enquiry. Mediawise Solutions, Central Queensland.",
-};
+export const metadata: Metadata = pageMeta("/contact", "Contact Mitch Harris", "Book a 20 minute chat or send an enquiry to Mediawise Solutions. In person around Gladstone and Rockhampton, online Australia wide. Phone 0409 265 711.");
 
 export default function Contact() {
   return (
     <>
-      <section className="hero dots" style={{ paddingBottom: 48 }}>
+      <section className="hero" style={{ paddingBottom: 48 }}>
         <div className="container">
           <span className="eyebrow">Contact</span>
           <h1>Tell me what&apos;s eating your week.</h1>

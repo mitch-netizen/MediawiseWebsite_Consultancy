@@ -29,6 +29,7 @@ export default function Footer() {
               <li><a href={PHONE_HREF}>{PHONE}</a></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/about">About</Link></li>
+              <li><Link href="/how-it-works#faq">FAQs</Link></li>
               <li><Link href="/contact">Contact</Link></li>
             </ul>
           </div>

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
+import { pageMeta } from "../lib/seo";
 import Link from "next/link";
-import { BOOKING_URL } from "../lib/content";
+import { BOOKING_URL, faqs } from "../lib/content";
+import JsonLd from "../components/JsonLd";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = {
-  title: "How it works",
-  description: "A 20 minute chat, a look at where your business is leaking, then the fixes: part time leadership, projects, or both.",
-};
+export const metadata: Metadata = pageMeta("/how-it-works", "How It Works and FAQs", "How working with Mediawise Solutions runs: a 20 minute chat, a look at where the business is leaking, then the fixes. Plus answers to common questions on pricing, tools and timing.");
 
 const steps = [
   {
@@ -64,6 +63,26 @@ export default function HowItWorks() {
           </div>
         </div>
       </section>
+
+      <section className="section white" id="faq">
+        <div className="container intro-split top">
+          <h2>Common questions</h2>
+          <div className="faq">
+            {faqs.map((f) => (
+              <details key={f.q}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+      }} />
 
       <CtaBand />
     </>

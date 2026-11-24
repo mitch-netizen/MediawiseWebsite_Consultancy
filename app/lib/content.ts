@@ -169,6 +169,7 @@ export const bundles = [
 export type Area = {
   slug: string;
   name: string;
+  seoTitle: string;
   stages: string;
   tone: "gold" | "teal" | "blue";
   headline: string;
@@ -182,6 +183,7 @@ export const areas: Area[] = [
   {
     slug: "marketing",
     name: "Marketing",
+    seoTitle: "Marketing Consultant and Fractional Marketing Lead, Central Queensland",
     stages: "Get found",
     tone: "gold",
     headline: "Marketing that's judged on the work it brings in.",
@@ -204,6 +206,7 @@ export const areas: Area[] = [
   {
     slug: "revenue-and-sales",
     name: "Revenue and sales",
+    seoTitle: "Sales and Revenue Consultant for Regional Businesses",
     stages: "Win the work",
     tone: "teal",
     headline: "Win more of the work you're already paying to attract.",
@@ -226,6 +229,7 @@ export const areas: Area[] = [
   {
     slug: "systems-and-automation",
     name: "Systems and automation",
+    seoTitle: "Business Automation and Power Automate Consultant, Queensland",
     stages: "Deliver it and get paid",
     tone: "blue",
     headline: "Deliver and bill without the double handling.",
@@ -248,3 +252,42 @@ export const areas: Area[] = [
 ];
 
 export const aud = (n: number) => `$${n.toLocaleString("en-AU")}`;
+
+export const faqs = [
+  {
+    q: "Who does Mediawise Solutions work with?",
+    a: "Established regional Australian businesses, usually turning over between $1M and $20M, with a team, a stack of software and growth that is costing more effort than it should.",
+  },
+  {
+    q: "Where is Mediawise Solutions based?",
+    a: "Central Queensland. Mitch Harris works in person around Gladstone and Rockhampton, and online with businesses right across Australia.",
+  },
+  {
+    q: "What does Mediawise Solutions help with?",
+    a: "Three areas that make up the chain from first enquiry to cash in the bank: marketing (getting found), revenue and sales (winning the work), and systems and automation (delivering the work and getting paid).",
+  },
+  {
+    q: "How much does it cost?",
+    a: "The five automation builds have a fixed scope and a fixed price, from $1,450 to $2,950 plus GST, with optional monthly care plans. All other work, including marketing, sales, diagnostics and part time leadership, is bespoke and quoted to suit the business.",
+  },
+  {
+    q: "How long does an automation build take?",
+    a: "Each of the five fixed price automation builds goes live in 2 to 3 weeks from kickoff, with 14 days of support after go live and a results report 30 days later.",
+  },
+  {
+    q: "What software do you use for automation?",
+    a: "Microsoft Power Automate on Microsoft 365, connected to the tools the business already pays for, such as Xero or MYOB. Mitch Harris holds certifications in Power Automate, Smartsheet and advanced Salesforce CRM reporting.",
+  },
+  {
+    q: "Who owns the software and automations?",
+    a: "The business does. Software subscriptions are set up in the client's name and paid by the client.",
+  },
+  {
+    q: "What is Mitch Harris's background?",
+    a: "A decade in commercial leadership. As General Sales Manager at Southern Cross Austereo he led a team of 12 and a portfolio of around $7M across Rockhampton, Gladstone and Emerald, and took the region to the number one national regional revenue ranking. He has also worked at Coca-Cola Amatil and in hospitality management. He founded Mediawise Solutions in 2023.",
+  },
+  {
+    q: "How do I get started?",
+    a: "Book a 20 minute chat at mediawisesolutions.au. You explain what is not working, and Mitch tells you straight whether he can help.",
+  },
+];

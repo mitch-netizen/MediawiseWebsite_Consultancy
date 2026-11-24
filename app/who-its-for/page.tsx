@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { pageMeta } from "../lib/seo";
 import Link from "next/link";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = {
-  title: "Who it's for",
-  description: "Established regional businesses turning over $1M to $20M, with a team, a stack of software and growth that's costing more effort than it should.",
-};
+export const metadata: Metadata = pageMeta("/who-its-for", "Who I Work With", "Established regional businesses turning over $1M to $20M, with a team, a stack of software and growth that is costing more effort than it should.");
 
 const signs = [
   { text: "Every quote, hire and decision still runs through you", href: "/services/revenue-and-sales" },

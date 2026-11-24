@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import { pageMeta } from "../lib/seo";
 import Link from "next/link";
 import { offers, aud } from "../lib/content";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = {
-  title: "Automation for regional business",
-  description: "Five fixed price automations for regional businesses: enquiries, quotes, invoices, onboarding and weekly numbers. Live in 2 to 3 weeks.",
-};
+export const metadata: Metadata = pageMeta("/automation", "Power Automate Automation Builds for Regional Businesses", "Five fixed price Power Automate builds: enquiry capture, same day quotes, faster invoice payment, staff onboarding and weekly numbers. Live in 2 to 3 weeks, from $1,450 plus GST.");
 
 export default function Automation() {
   return (
     <>
-      <section className="hero dots">
+      <section className="hero">
         <div className="container">
           <span className="eyebrow">Fixed price automation</span>
           <h1>Your admin shouldn&apos;t need a night shift.</h1>

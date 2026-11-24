@@ -8,7 +8,7 @@ A static HTML website showcasing marketing consultancy services based in Central
 
 ## Deployment
 
-Deployed on Vercel at [mediawisesolutions.com.au](https://mediawisesolutions.com.au)
+Deployed on Vercel at [mediawisesolutions.com.au](https://mediawisesolutions.au)
 
 ### Local Development
 

@@ -1,88 +1,51 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { SITE_URL, EMAIL, PHONE } from "./lib/content";
+
+const display = localFont({ src: "./fonts/BebasNeue-Regular.ttf", variable: "--font-display", weight: "400", display: "swap" });
+const body = localFont({ src: "./fonts/DMSans-Variable.ttf", variable: "--font-body", weight: "300 700", display: "swap" });
+const serif = localFont({ src: "./fonts/Fraunces-Italic.ttf", variable: "--font-serif", style: "italic", weight: "300 700", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Mitch Harris - Marketing & Revenue Strategist | Mediawise Solutions",
-  description: "Portfolio and consultancy website for Mitch Harris - Marketing & Revenue Strategist based in Central Queensland, Australia. Expert in revenue generation, growth strategy, and marketing optimization.",
-  keywords: [
-    "marketing strategist",
-    "revenue growth",
-    "business consulting",
-    "Central Queensland",
-    "marketing consultant",
-    "sales strategy",
-  ],
-  authors: [{ name: "Mitch Harris" }],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Mediawise Solutions | Marketing, Revenue and Automation for Regional Business",
+    template: "%s | Mediawise Solutions",
+  },
+  description:
+    "Mitch Harris helps regional Australian businesses grow revenue, sharpen their marketing and automate the admin that eats their week. Based in Central Queensland.",
   openGraph: {
-    title: "Mitch Harris - Marketing & Revenue Strategist",
-    description: "Portfolio and consultancy website for Mitch Harris - Marketing & Revenue Strategist based in Central Queensland, Australia.",
-    url: "https://mediawisesolutions.com.au",
     siteName: "Mediawise Solutions",
-    images: [
-      {
-        url: "https://mediawisesolutions.com.au/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Mediawise Solutions - Marketing & Revenue Strategy",
-      },
-    ],
     type: "website",
+    locale: "en_AU",
+    url: SITE_URL,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mitch Harris - Marketing & Revenue Strategist",
-    description: "Portfolio and consultancy website for Mitch Harris - Marketing & Revenue Strategist based in Central Queensland, Australia.",
-    images: ["https://mediawisesolutions.com.au/og-image.png"],
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  icons: { icon: "/favicon.ico" },
 };
 
-function StructuredData() {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Mitch Harris",
-    url: "https://mediawisesolutions.com.au",
-    image: "https://mediawisesolutions.com.au/og-image.png",
-    jobTitle: "Marketing & Revenue Strategist",
-    worksFor: {
-      "@type": "LocalBusiness",
-      name: "Mediawise Solutions",
-      url: "https://mediawisesolutions.com.au",
-      areaServed: "AU",
-      address: {
-        "@type": "PostalAddress",
-        addressRegion: "QLD",
-        addressCountry: "AU",
-      },
-    },
-  };
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Mediawise Solutions",
+  url: SITE_URL,
+  email: EMAIL,
+  telephone: PHONE,
+  founder: { "@type": "Person", name: "Mitch Harris" },
+  areaServed: "AU",
+  address: { "@type": "PostalAddress", addressRegion: "QLD", addressCountry: "AU" },
+};
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-    />
-  );
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#223447" />
-        <StructuredData />
-      </head>
+    <html lang="en-AU" className={`${display.variable} ${body.variable} ${serif.variable}`}>
       <body>
-        {children}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        <Header />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

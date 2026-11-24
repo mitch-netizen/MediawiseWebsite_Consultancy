@@ -1,0 +1,40 @@
+import type { Metadata } from "next";
+import { BOOKING_URL, EMAIL, PHONE, PHONE_HREF, ENQUIRY_FORM_URL } from "../lib/content";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Book a 20 minute chat or send an enquiry. Mediawise Solutions, Central Queensland.",
+};
+
+export default function Contact() {
+  return (
+    <>
+      <section className="hero dots" style={{ paddingBottom: 48 }}>
+        <div className="container">
+          <span className="eyebrow">Contact</span>
+          <h1>Tell me what&apos;s <span className="accent">eating your week.</span></h1>
+          <p className="lead">Send it through below, or skip straight to a 20 minute chat. You&apos;ll hear back fast either way.</p>
+        </div>
+      </section>
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container split">
+          <div>
+            <iframe className="form-embed" src={ENQUIRY_FORM_URL} title="Mediawise Solutions enquiry form" loading="lazy" />
+          </div>
+          <div>
+            <div className="card featured">
+              <h3>Prefer to talk?</h3>
+              <p>Grab a 20 minute slot. No slides, no hard sell, just a straight look at where the time is going.</p>
+              <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+            </div>
+            <div className="card" style={{ marginTop: 24 }}>
+              <h3>Direct</h3>
+              <p style={{ marginBottom: 8 }}><a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
+              <p style={{ marginBottom: 0 }}><a href={PHONE_HREF}>{PHONE}</a></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

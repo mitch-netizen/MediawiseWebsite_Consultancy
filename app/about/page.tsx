@@ -30,7 +30,7 @@ export default function About() {
               <h3>How I work</h3>
               <ul className="checks">
                 <li>Direct and honest about fit. If I&apos;m not the right person, I&apos;ll say so.</li>
-                <li>Fixed scope and fixed price, agreed before I start</li>
+                <li>Automation builds have a fixed scope and price. Everything else is bespoke to your business.</li>
                 <li>Built on the tools you already pay for, set up in your name</li>
                 <li>Measured. We record the number before and after.</li>
               </ul>

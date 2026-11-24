@@ -57,7 +57,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
               </div>
             ))}
           </div>
-          <p className="formats"><strong>Ways to work together:</strong> {a.formats.join(", ")}. Every job is scoped and priced before I start.</p>
+          <p className="formats"><strong>Ways to work together:</strong> {a.formats.join(", ")}. {a.slug === "systems-and-automation" ? "The five builds have a fixed scope and price. Everything else is bespoke and quoted to suit your business." : "All bespoke, shaped around your business and quoted to suit."}</p>
         </div>
       </section>
 

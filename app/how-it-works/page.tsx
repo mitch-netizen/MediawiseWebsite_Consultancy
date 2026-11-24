@@ -5,7 +5,7 @@ import CtaBand from "../components/CtaBand";
 
 export const metadata: Metadata = {
   title: "How it works",
-  description: "A 20 minute chat, a fixed fee look at where your business is leaking, then the fixes: part time leadership, fixed price projects, or both.",
+  description: "A 20 minute chat, a look at where your business is leaking, then the fixes: part time leadership, projects, or both.",
 };
 
 const steps = [
@@ -17,12 +17,12 @@ const steps = [
   {
     title: "Find the leaks",
     body: "I spend time inside the business mapping the chain from enquiry to cash, talk to the people doing the work, and look at the numbers. You get a prioritised plan with the cost of each fix.",
-    detail: ["Fixed fee, agreed before I start"],
+    detail: ["Bespoke to your business and quoted upfront"],
   },
   {
     title: "Fix them",
-    body: "Either I stay on part time as your marketing and revenue lead, or I build the fixes as fixed price projects. Often it's a bit of both. You choose.",
-    detail: ["Scope and price in writing before any work starts", "Anything new gets quoted first"],
+    body: "Either I stay on part time as your marketing and revenue lead, or I build the fixes as projects. Often it's a bit of both. You choose.",
+    detail: ["Automation builds have a fixed scope and price", "Everything else is bespoke and quoted to suit"],
   },
   {
     title: "Check the numbers",

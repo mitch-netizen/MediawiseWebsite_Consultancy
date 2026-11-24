@@ -199,7 +199,7 @@ export const areas: Area[] = [
       { title: "Reporting", body: "One page you can read in five minutes: spend, enquiries, cost per enquiry and the work it turned into." },
       { title: "Fractional marketing leadership", body: "A part time head of marketing who sits in your leadership meetings, manages suppliers and keeps the plan moving." },
     ],
-    formats: ["Fixed price strategy projects", "Monthly campaign management", "Part time marketing lead"],
+    formats: ["Strategy projects", "Monthly campaign management", "Part time marketing lead"],
   },
   {
     slug: "revenue-and-sales",
@@ -221,7 +221,7 @@ export const areas: Area[] = [
       { title: "Sales team coaching", body: "Coaching and training for your team from someone who has carried a target and led a team of 12." },
       { title: "Pricing and quoting reviews", body: "How you price, how you quote and how fast it goes out, compared with what wins." },
     ],
-    formats: ["Fixed price diagnostics", "Sales process builds", "Ongoing coaching", "Part time revenue lead"],
+    formats: ["Revenue diagnostics", "Sales process builds", "Ongoing coaching", "Part time revenue lead"],
   },
   {
     slug: "systems-and-automation",

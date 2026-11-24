@@ -14,8 +14,8 @@ export default function Pricing() {
       <section className="hero dots">
         <div className="container">
           <span className="eyebrow">Pricing and how it works</span>
-          <h1>Fixed price. No surprises.</h1>
-          <p className="lead">You know the total before I start. Anything outside the agreed scope gets quoted in writing first. All prices are in Australian dollars and exclude GST.</p>
+          <h1>Automation pricing. No surprises.</h1>
+          <p className="lead">The five automation builds have a fixed scope and a fixed price, so you know the total before I start. Anything outside the agreed scope gets quoted in writing first. All prices are in Australian dollars and exclude GST.</p>
         </div>
       </section>
 
@@ -76,7 +76,7 @@ export default function Pricing() {
               <li>Software subscriptions are in your name and paid by you, so you keep ownership</li>
             </ul>
             <h3 style={{ marginTop: 32 }}>Marketing and revenue work</h3>
-            <p className="muted">Diagnostics, part time leadership, campaigns and sales coaching are scoped to your business. <Link href="/contact" style={{ color: "var(--teal-ink)", fontWeight: 600 }}>Tell me what you need</Link> and I&apos;ll send a fixed quote.</p>
+            <p className="muted">Everything outside the automation builds is bespoke: diagnostics, part time leadership, campaigns and sales coaching are shaped around your business. <Link href="/contact" style={{ color: "var(--teal-ink)", fontWeight: 600 }}>Tell me what you need</Link> and I&apos;ll put together a quote.</p>
           </div>
         </div>
       </section>

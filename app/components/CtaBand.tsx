@@ -1,6 +1,6 @@
 import { BOOKING_URL } from "../lib/content";
 
-export default function CtaBand({ title = "Let's find your time back.", text = "20 minutes, no slides, no hard sell. Just a straight look at where the time and money is going." }: { title?: string; text?: string }) {
+export default function CtaBand({ title = "Let's find where it's leaking.", text = "20 minutes, no slides, no hard sell. Just a straight conversation about where the time and money is going." }: { title?: string; text?: string }) {
   return (
     <section className="cta-band section-tight">
       <div className="container">

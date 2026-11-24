@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div>
             <Image src="/logo-horizontal-dark.png" alt="Mediawise Solutions" width={390} height={181} />
-            <p className="muted">Marketing, revenue strategy and automation for regional businesses. Based in Central Queensland, working Australia wide.</p>
+            <p className="muted">Marketing, revenue and systems for established regional businesses. Based in Central Queensland, working Australia wide.</p>
           </div>
           <div>
             <h4>Automation</h4>

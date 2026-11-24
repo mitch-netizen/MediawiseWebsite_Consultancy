@@ -14,15 +14,14 @@ export default function Automation() {
       <section className="hero dots">
         <div className="container">
           <span className="eyebrow">Fixed price automation</span>
-          <h1>Your admin shouldn&apos;t need <span className="accent">a night shift.</span></h1>
+          <h1>Your admin shouldn&apos;t need a night shift.</h1>
           <p className="lead">Five automations that take the repetitive work off your plate. Fixed price, built in Power Automate on the systems you already pay for, and live in 2 to 3 weeks.</p>
         </div>
       </section>
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container grid grid-2">
           {offers.map((o) => (
             <Link key={o.slug} href={`/automation/${o.slug}`} className="card">
-              <span className="offer-num">{o.number}</span>
               <h3>{o.name}</h3>
               <p>{o.problem}</p>
               <p className="muted">{o.fixes}</p>

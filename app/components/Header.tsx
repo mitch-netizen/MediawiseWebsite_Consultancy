@@ -5,7 +5,7 @@ import { useState } from "react";
 import { BOOKING_URL } from "../lib/content";
 
 const links = [
-  { href: "/#services", label: "Services" },
+  { href: "/#how", label: "How I help" },
   { href: "/automation", label: "Automation" },
   { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },

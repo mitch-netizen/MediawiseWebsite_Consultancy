@@ -13,12 +13,12 @@ export default function About() {
       <section className="hero dots">
         <div className="container">
           <span className="eyebrow">About</span>
-          <h1>I&apos;ve run the revenue. <span className="accent">Now I help you run yours.</span></h1>
+          <h1>I&apos;ve run the revenue. Now I help you run yours.</h1>
           <p className="lead">I&apos;m Mitch Harris. I started Mediawise Solutions in 2023 to give regional businesses the senior commercial help that&apos;s usually only available to big companies in big cities.</p>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container split">
           <div>
             <h2>The background</h2>
@@ -48,7 +48,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="section dots" style={{ paddingTop: 0 }}>
+      <section className="section dots">
         <div className="container split">
           <Image src="/logo-vertical-dark.png" alt="Mediawise Solutions" width={227} height={272} style={{ maxWidth: 220 }} />
           <div>

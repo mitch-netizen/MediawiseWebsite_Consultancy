@@ -14,12 +14,12 @@ export default function Pricing() {
       <section className="hero dots">
         <div className="container">
           <span className="eyebrow">Pricing and how it works</span>
-          <h1>Fixed price. <span className="accent">No surprises.</span></h1>
+          <h1>Fixed price. No surprises.</h1>
           <p className="lead">You know the total before I start. Anything outside the agreed scope gets quoted in writing first. All prices are in Australian dollars and exclude GST.</p>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container">
           <h2>Automation offers</h2>
           <div className="table-wrap">
@@ -54,7 +54,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="section dots" style={{ paddingTop: 0 }}>
+      <section className="section dots">
         <div className="container split">
           <div>
             <h2>Care plans</h2>
@@ -76,12 +76,12 @@ export default function Pricing() {
               <li>Software subscriptions are in your name and paid by you, so you keep ownership</li>
             </ul>
             <h3 style={{ marginTop: 32 }}>Marketing and revenue work</h3>
-            <p className="muted">Strategy, campaigns and sales coaching are scoped to the job. <Link href="/contact" style={{ color: "var(--teal)" }}>Tell me what you need</Link> and I&apos;ll send a fixed quote.</p>
+            <p className="muted">Diagnostics, part time leadership, campaigns and sales coaching are scoped to your business. <Link href="/contact" style={{ color: "var(--teal-ink)", fontWeight: 600 }}>Tell me what you need</Link> and I&apos;ll send a fixed quote.</p>
           </div>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container">
           <h2>How it works</h2>
           <div className="steps">

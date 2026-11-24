@@ -5,18 +5,18 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SITE_URL, EMAIL, PHONE } from "./lib/content";
 
-const display = localFont({ src: "./fonts/BebasNeue-Regular.ttf", variable: "--font-display", weight: "400", display: "swap" });
+const display = localFont({ src: "./fonts/Fraunces-Full.woff2", variable: "--font-display", weight: "100 900", display: "swap" });
 const body = localFont({ src: "./fonts/DMSans-Variable.ttf", variable: "--font-body", weight: "300 700", display: "swap" });
 const serif = localFont({ src: "./fonts/Fraunces-Italic.ttf", variable: "--font-serif", style: "italic", weight: "300 700", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Mediawise Solutions | Marketing, Revenue and Automation for Regional Business",
+    default: "Mediawise Solutions | Marketing, Revenue and Systems for Established Regional Businesses",
     template: "%s | Mediawise Solutions",
   },
   description:
-    "Mitch Harris helps regional Australian businesses grow revenue, sharpen their marketing and automate the admin that eats their week. Based in Central Queensland.",
+    "Mitch Harris works with established regional businesses turning over $1M to $20M to tighten the chain from first enquiry to cash in the bank: marketing, sales and the systems in between. Based in Central Queensland.",
   openGraph: {
     siteName: "Mediawise Solutions",
     type: "website",

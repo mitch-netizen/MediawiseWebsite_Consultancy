@@ -168,19 +168,28 @@ export const bundles = [
 
 export const services = [
   {
-    title: "Marketing strategy",
-    body: "Campaigns built around commercial outcomes, not vanity metrics. Strategy, planning and hands on delivery across Google, Meta and local media.",
-    points: ["Marketing plans and campaign strategy", "Google Ads and social campaigns", "Fractional marketing leadership"],
+    link: "Getting found",
+    title: "Marketing",
+    body: "Marketing that's judged on the work it brings in. I set the strategy, run the campaigns or lead your team as a part time head of marketing.",
+    points: ["Marketing plans tied to revenue targets", "Google, Meta and local media campaigns", "Reporting you can read in five minutes", "Fractional marketing leadership"],
+    href: "/contact",
+    cta: "Talk about your marketing",
   },
   {
+    link: "Winning the work",
     title: "Revenue and sales",
-    body: "A decade running real revenue teams. I find where the revenue is leaking and build the sales rhythm that fixes it.",
-    points: ["Revenue diagnostics", "Sales process and pipeline design", "Sales team coaching"],
+    body: "Most businesses at your size are losing work they've already paid to attract. I find where it slips and build a sales rhythm the team will actually follow.",
+    points: ["Revenue diagnostics", "Sales process, pipeline and CRM set up", "Sales team coaching", "Pricing and quoting reviews"],
+    href: "/contact",
+    cta: "Talk about your sales",
   },
   {
-    title: "Automation and systems",
-    body: "Fixed price automations that take the admin off your plate, built in Power Automate on the tools you already pay for.",
-    points: ["Five ready made offers", "Live in 2 to 3 weeks", "Results measured at 30 days"],
+    link: "Delivering and getting paid",
+    title: "Systems and automation",
+    body: "The handoffs between enquiry, job, invoice and payment are where time disappears. I build them in Power Automate on Microsoft 365 and the tools you already pay for.",
+    points: ["Five fixed price builds, live in 2 to 3 weeks", "Custom workflows across your systems", "Results measured 30 days after go live"],
+    href: "/automation",
+    cta: "See the automation builds",
   },
 ];
 

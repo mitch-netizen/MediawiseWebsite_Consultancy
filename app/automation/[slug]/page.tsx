@@ -23,7 +23,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
     <>
       <section className="hero dots">
         <div className="container">
-          <span className="eyebrow">{o.number} · {o.name}</span>
+          <span className="eyebrow">{o.name}</span>
           <h1>{o.headline}</h1>
           <p className="lead" style={{ marginTop: 24 }}>{o.problem}</p>
           <p className="serif">{o.fixes}</p>
@@ -34,7 +34,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container split">
           <div>
             <h2>What I build</h2>
@@ -62,7 +62,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      <section className="section dots" style={{ paddingTop: 0 }}>
+      <section className="section dots">
         <div className="container">
           <h2>How it runs</h2>
           <div className="steps">
@@ -75,13 +75,12 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container">
           <h2>Other fixes</h2>
           <div className="grid grid-2">
             {others.map((x) => (
               <Link key={x.slug} href={`/automation/${x.slug}`} className="card">
-                <span className="offer-num">{x.number}</span>
                 <h3>{x.name}</h3>
                 <p className="muted" style={{ marginBottom: 0 }}>{x.fixes}</p>
               </Link>

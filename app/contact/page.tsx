@@ -12,11 +12,11 @@ export default function Contact() {
       <section className="hero dots" style={{ paddingBottom: 48 }}>
         <div className="container">
           <span className="eyebrow">Contact</span>
-          <h1>Tell me what&apos;s <span className="accent">eating your week.</span></h1>
+          <h1>Tell me what&apos;s eating your week.</h1>
           <p className="lead">Send it through below, or skip straight to a 20 minute chat. You&apos;ll hear back fast either way.</p>
         </div>
       </section>
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="container split">
           <div>
             <iframe className="form-embed" src={ENQUIRY_FORM_URL} title="Mediawise Solutions enquiry form" loading="lazy" />

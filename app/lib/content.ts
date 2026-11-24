@@ -166,30 +166,84 @@ export const bundles = [
   { name: "Full system", includes: "All five", price: 9750, carePlan: 695, saving: 2000 },
 ];
 
-export const services = [
+export type Area = {
+  slug: string;
+  name: string;
+  stages: string;
+  tone: "gold" | "teal" | "blue";
+  headline: string;
+  intro: string;
+  leaks: string[];
+  work: { title: string; body: string }[];
+  formats: string[];
+};
+
+export const areas: Area[] = [
   {
-    link: "Getting found",
-    title: "Marketing",
-    body: "Marketing that's judged on the work it brings in. I set the strategy, run the campaigns or lead your team as a part time head of marketing.",
-    points: ["Marketing plans tied to revenue targets", "Google, Meta and local media campaigns", "Reporting you can read in five minutes", "Fractional marketing leadership"],
-    href: "/contact",
-    cta: "Talk about your marketing",
+    slug: "marketing",
+    name: "Marketing",
+    stages: "Get found",
+    tone: "gold",
+    headline: "Marketing that's judged on the work it brings in.",
+    intro:
+      "Most businesses your size spend real money on marketing every month and can't say what comes back. I set the strategy, run the campaigns or lead your team, and tie every dollar to enquiries and revenue.",
+    leaks: [
+      "Ad spend nobody can tie back to a sale",
+      "An agency report full of reach and impressions, and no mention of jobs",
+      "Campaigns that start strong and stop when things get busy",
+      "Enquiries arriving from five places with no one tracking where they came from",
+    ],
+    work: [
+      { title: "Marketing strategy", body: "A plan built backwards from your revenue target: who you're chasing, what you say to them, where, and what it should cost per enquiry." },
+      { title: "Campaigns", body: "Google, Meta and local media campaigns, planned and run properly, with the tracking set up before a dollar is spent." },
+      { title: "Reporting", body: "One page you can read in five minutes: spend, enquiries, cost per enquiry and the work it turned into." },
+      { title: "Fractional marketing leadership", body: "A part time head of marketing who sits in your leadership meetings, manages suppliers and keeps the plan moving." },
+    ],
+    formats: ["Fixed price strategy projects", "Monthly campaign management", "Part time marketing lead"],
   },
   {
-    link: "Winning the work",
-    title: "Revenue and sales",
-    body: "Most businesses at your size are losing work they've already paid to attract. I find where it slips and build a sales rhythm the team will actually follow.",
-    points: ["Revenue diagnostics", "Sales process, pipeline and CRM set up", "Sales team coaching", "Pricing and quoting reviews"],
-    href: "/contact",
-    cta: "Talk about your sales",
+    slug: "revenue-and-sales",
+    name: "Revenue and sales",
+    stages: "Win the work",
+    tone: "teal",
+    headline: "Win more of the work you're already paying to attract.",
+    intro:
+      "Once the enquiries are coming in, the money is won or lost in the follow up. I spent a decade running regional sales teams. I find where work slips through and build a sales rhythm your team will actually follow.",
+    leaks: [
+      "Quotes that go quiet and never get chased",
+      "A pipeline that lives in heads, inboxes and the back of a diary",
+      "Pricing that hasn't been looked at in years",
+      "Good salespeople with no process, and no way to tell who's doing well",
+    ],
+    work: [
+      { title: "Revenue diagnostics", body: "A clear look at where revenue comes from, where it leaks and what the fixes are worth, in order of payback." },
+      { title: "Sales process and pipeline", body: "Stages, follow up rules and a CRM set up so every opportunity has an owner and a next step." },
+      { title: "Sales team coaching", body: "Coaching and training for your team from someone who has carried a target and led a team of 12." },
+      { title: "Pricing and quoting reviews", body: "How you price, how you quote and how fast it goes out, compared with what wins." },
+    ],
+    formats: ["Fixed price diagnostics", "Sales process builds", "Ongoing coaching", "Part time revenue lead"],
   },
   {
-    link: "Delivering and getting paid",
-    title: "Systems and automation",
-    body: "The handoffs between enquiry, job, invoice and payment are where time disappears. I build them in Power Automate on Microsoft 365 and the tools you already pay for.",
-    points: ["Five fixed price builds, live in 2 to 3 weeks", "Custom workflows across your systems", "Results measured 30 days after go live"],
-    href: "/automation",
-    cta: "See the automation builds",
+    slug: "systems-and-automation",
+    name: "Systems and automation",
+    stages: "Deliver it and get paid",
+    tone: "blue",
+    headline: "Deliver and bill without the double handling.",
+    intro:
+      "The handoffs between enquiry, job, invoice and payment are where hours quietly disappear. I build them in Power Automate on Microsoft 365 and connect the tools you already pay for, so the work moves on its own.",
+    leaks: [
+      "The same job keyed into three different systems",
+      "Invoices sitting at 45 days because nobody had time to chase",
+      "New starters onboarded from a folder of old PDFs",
+      "Finding out how last month went when the accountant tells you",
+    ],
+    work: [
+      { title: "Fixed price builds", body: "Five common fixes with a set scope and price, live in 2 to 3 weeks. Enquiries, quotes, invoices, onboarding and weekly numbers." },
+      { title: "Custom workflows", body: "Approvals, job handoffs, reporting and anything else that runs on copy and paste, built across your systems." },
+      { title: "Systems review", body: "A map of the tools you pay for, what each one should be doing, and where they should talk to each other." },
+      { title: "Care plans", body: "Monitoring, fixes when a connected app changes, and small improvements each month." },
+    ],
+    formats: ["Five fixed price builds", "Custom projects", "Monthly care plans"],
   },
 ];
 

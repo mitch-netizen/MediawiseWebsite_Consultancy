@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import CtaBand from "../components/CtaBand";
 
 export const metadata: Metadata = {
@@ -50,12 +49,13 @@ export default function About() {
 
       <section className="section dots">
         <div className="container split">
-          <Image src="/logo-vertical-dark.png" alt="Mediawise Solutions" width={227} height={272} style={{ maxWidth: 220 }} />
-          <div>
-            <h2>Based in Central Queensland</h2>
-            <p>I&apos;m based in Central Queensland and work with businesses right across Australia, in person around Gladstone and Rockhampton and online everywhere else.</p>
-            <p className="serif">Revenue strategy that moves.</p>
-          </div>
+          <h2>Track record</h2>
+          <ul className="record">
+            <li><strong>Southern Cross Austereo</strong>General Sales Manager across Rockhampton, Gladstone and Emerald. Led a team of 12 and a portfolio of around $7M, took the region to the number one national regional revenue ranking, and was one of SCA&apos;s formally recognised internal trainers.</li>
+            <li><strong>Coca-Cola Amatil</strong>Commercial and sales experience with one of the country&apos;s biggest distributors.</li>
+            <li><strong>Hospitality management</strong>Paul Irvin Hotels and Heron Island, so I know the other side of the counter too.</li>
+            <li><strong>Mediawise Solutions</strong>Founded in 2023. Based in Central Queensland, working with businesses right across Australia.</li>
+          </ul>
         </div>
       </section>
       <CtaBand />

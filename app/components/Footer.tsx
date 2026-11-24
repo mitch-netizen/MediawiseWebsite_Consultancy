@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ABN, EMAIL, PHONE, PHONE_HREF, offers } from "../lib/content";
+import { ABN, EMAIL, PHONE, PHONE_HREF, areas } from "../lib/content";
 
 export default function Footer() {
   return (
@@ -12,11 +12,14 @@ export default function Footer() {
             <p className="muted">Marketing, revenue and systems for established regional businesses. Based in Central Queensland, working Australia wide.</p>
           </div>
           <div>
-            <h4>Automation</h4>
+            <h4>Services</h4>
             <ul>
-              {offers.map((o) => (
-                <li key={o.slug}><Link href={`/automation/${o.slug}`}>{o.name}</Link></li>
+              {areas.map((a) => (
+                <li key={a.slug}><Link href={`/services/${a.slug}`}>{a.name}</Link></li>
               ))}
+              <li><Link href="/automation">Automation builds</Link></li>
+              <li><Link href="/who-its-for">Who it&apos;s for</Link></li>
+              <li><Link href="/how-it-works">How it works</Link></li>
             </ul>
           </div>
           <div>

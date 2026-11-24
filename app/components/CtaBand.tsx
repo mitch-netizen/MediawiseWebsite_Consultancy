@@ -8,7 +8,7 @@ export default function CtaBand({ title = "Let's find where it's leaking.", text
           <h2>{title}</h2>
           <p className="muted" style={{ marginTop: 12, marginBottom: 0 }}>{text}</p>
         </div>
-        <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+        <a className="btn btn-dark" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
       </div>
     </section>
   );

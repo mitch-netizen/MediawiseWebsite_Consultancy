@@ -1,224 +1,118 @@
-"use client";
+import Link from "next/link";
+import { BOOKING_URL, areas } from "./lib/content";
+import CtaBand from "./components/CtaBand";
+import { MiniEmblem, Arrow } from "./components/Emblem";
 
-import React, { useEffect, useState } from "react";
+const stages = [
+  { x: 14, label: "Get found", who: "Marketing" },
+  { x: 383, label: "Win the work", who: "Revenue and sales" },
+  { x: 752, label: "Deliver it", who: "Systems and automation" },
+  { x: 1122, label: "Get paid", who: "Systems and automation" },
+];
+
+const blurbs: Record<string, string> = {
+  marketing: "Marketing that's judged on the work it brings in. Strategy, campaigns and part time marketing leadership.",
+  "revenue-and-sales": "Win more of the work you're already paying to attract. Diagnostics, sales process and team coaching.",
+  "systems-and-automation": "Deliver and bill without the double handling. Five fixed price automation builds, plus bespoke work.",
+};
 
 export default function Home() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Track custom cursor position
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  // Track scroll progress
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setScrollProgress(scrolled);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <>
-      {/* Progress Bar */}
-      <div
-        className="progress-bar"
-        style={{ width: `${scrollProgress}%` }}
-      ></div>
-
-      {/* Custom Cursor */}
-      <div
-        className="custom-cursor"
-        style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-        }}
-      ></div>
-
-      {/* Navigation */}
-      <header className="fixed top-0 left-0 right-0 bg-[rgba(34,52,71,0.95)] backdrop-blur-[10px] z-50 border-b border-[rgba(2,216,190,0.15)]">
-        <nav className="max-w-6xl mx-auto px-8 py-6 flex justify-between items-center">
-          <a href="#" className="font-display text-2xl font-bold text-teal">
-            MEDIAWISE
-          </a>
-          <div className="flex gap-8 list-none">
-            <a
-              href="#about"
-              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
-            >
-              About
-            </a>
-            <a
-              href="#services"
-              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
-            >
-              Services
-            </a>
-            <a
-              href="#contact"
-              className="text-white text-sm font-medium uppercase tracking-wider hover:text-teal transition-colors"
-            >
-              Contact
-            </a>
+      <section className="hero hero-home">
+        <div className="container">
+          <p className="kicker">Marketing, revenue and systems for established regional businesses</p>
+          <h1>Your business has outgrown the way it runs.</h1>
+          <p className="lead">
+            I&apos;m Mitch Harris. I help businesses turning over $1M to $20M tighten the chain from first enquiry to cash in the bank.
+          </p>
+          <div className="btn-row">
+            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+            <Link className="text-link" href="/how-it-works">See how it works</Link>
           </div>
-        </nav>
-      </header>
 
-      {/* Main Content */}
-      <main>
-        {/* Hero Section */}
-        <section
-          id="hero"
-          className="min-h-screen flex items-center pt-24 px-8"
-        >
-          <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-6xl font-bold font-display mb-6 animate-fadeUp uppercase text-white">
-              Revenue Strategy <span className="text-teal">That Moves</span>
-            </h1>
-            <p className="text-xl text-white max-w-2xl mx-auto mb-8 animate-fadeUp leading-relaxed">
-              I help regional and growth-stage businesses build marketing strategy, grow revenue, and fix the systems holding them back — without the cost of a full-time executive.
-            </p>
-            <button className="btn btn-primary">WORK WITH ME</button>
-          </div>
-        </section>
-
-        {/* About Section */}
-        <section id="about" className="py-20 px-8">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-5xl font-bold font-display mb-12 text-white uppercase">
-              A Decade of Execution
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div>
-                <p className="text-lg text-white leading-relaxed mb-6">
-                  I'm not a consultant who advises from the sidelines. I work <span className="text-teal font-bold">embedded inside your business</span>, owning outcomes and reporting directly to you.
-                </p>
-                <p className="text-lg text-white leading-relaxed mb-6">
-                  With a decade running real revenue functions, I've built campaign strategies, performance systems, and teams that deliver measurable results. I focus on what actually works in commercial reality, not what looks good in frameworks.
-                </p>
-              </div>
-              <div>
-                <div className="space-y-4">
-                  <div className="border-l-4 border-teal pl-6 py-2">
-                    <p className="text-lg font-bold text-teal">Strategy + Execution</p>
-                    <p className="text-white">Revenue strategy isn't a PowerPoint deck—it's embedded execution turning insight into repeatable systems.</p>
-                  </div>
-                  <div className="border-l-4 border-teal pl-6 py-2">
-                    <p className="text-lg font-bold text-teal">Systems-Based Approach</p>
-                    <p className="text-white">Most businesses leak time through broken processes. I design automation and workflows that actually get used.</p>
-                  </div>
-                  <div className="border-l-4 border-teal pl-6 py-2">
-                    <p className="text-lg font-bold text-teal">Regional Expertise</p>
-                    <p className="text-white">Based in Central Queensland. Working with clients across Australia. Direct, honest, and focused on outcomes.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="py-20 px-8">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-5xl font-bold font-display mb-12 text-white uppercase">
-              Services
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Embedded Marketing Leadership",
-                  desc: "Strategy, campaigns, and team leadership embedded in your business."
-                },
-                {
-                  title: "Revenue Growth Consulting",
-                  desc: "Sales systems, pipeline management, and forecasting for consistent growth."
-                },
-                {
-                  title: "Workflow & Systems Design",
-                  desc: "Salesforce, Power Automate, and Smartsheet automation that actually gets used."
-                },
-                {
-                  title: "Marketing Strategy",
-                  desc: "Brand positioning, digital strategy, and campaign architecture."
-                },
-                {
-                  title: "Sales Team Development",
-                  desc: "Coaching, onboarding, and performance systems for high-performing teams."
-                },
-                {
-                  title: "Business Improvement",
-                  desc: "Process optimization, change management, and operational efficiency."
-                }
-              ].map((service, i) => (
-                <div key={i} className="card border-teal/30 hover:border-teal">
-                  <h3 className="text-lg font-bold mb-4 text-white uppercase">{service.title}</h3>
-                  <p className="text-white">
-                    {service.desc}
-                  </p>
-                </div>
+          <figure className="chain">
+            <svg viewBox="0 0 1136 80" role="img" aria-label="Four stages from enquiry to payment: get found, win the work, deliver it, get paid">
+              <line x1="14" y1="40" x2="1122" y2="40" stroke="#d8c38a" strokeWidth="1" opacity="0.55" />
+              <line className="chain-run" x1="14" y1="40" x2="400" y2="40" stroke="#02d8be" strokeWidth="2" />
+              <circle cx="400" cy="40" r="5" fill="#02d8be" />
+              {stages.map((s) => (
+                <g key={s.label}>
+                  <circle cx={s.x} cy="40" r="13" fill="#223447" stroke="#d8c38a" strokeWidth="1.25" />
+                  <circle cx={s.x} cy="40" r="4" fill="#d8c38a" />
+                </g>
               ))}
-            </div>
-          </div>
-        </section>
+            </svg>
+            <ol className="chain-labels">
+              {stages.map((s) => (
+                <li key={s.label}>
+                  <span className="chain-stage">{s.label}</span>
+                  <span className="chain-who">{s.who}</span>
+                </li>
+              ))}
+            </ol>
+          </figure>
+        </div>
+      </section>
 
-        {/* Contact Section */}
-        <section id="contact" className="py-20 px-8">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-5xl font-bold font-display mb-8 text-white uppercase">
-              Let's Talk Strategy
-            </h2>
-            <p className="text-lg text-white mb-8 max-w-2xl mx-auto leading-relaxed">
-              Whether you're looking to build marketing strategy, grow revenue, or fix broken systems, I'll give you straight talk on what'll actually work for your business.
-            </p>
-            <div className="space-y-4">
-              <button className="btn btn-primary">START A CONVERSATION</button>
-              <p className="text-sm text-white/70">
-                Response within one business day. No obligation, no jargon.
-              </p>
-            </div>
+      <section className="section" id="services">
+        <div className="container">
+          <div className="intro-split">
+            <h2>Three areas. One chain.</h2>
+            <p className="muted">A leak in one usually starts in another, so I work across all three. Pick the one that hurts most and start there.</p>
           </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-navy border-t border-teal/20 py-12 px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div>
-              <h3 className="text-teal font-bold mb-4">Mitch Harris</h3>
-              <p className="text-white text-sm">Marketing & Revenue Strategist</p>
-              <p className="text-white/70 text-sm">Central Queensland, Australia</p>
-            </div>
-            <div>
-              <h3 className="text-teal font-bold mb-4">Contact</h3>
-              <p className="text-white text-sm">Email: mitch.harris@outlook.com.au</p>
-              <p className="text-white text-sm">Phone: +61 409 265 711</p>
-            </div>
-            <div>
-              <h3 className="text-teal font-bold mb-4">Connect</h3>
-              <p className="text-white text-sm">LinkedIn: linkedin.com/in/mitch-harris-consultant</p>
-              <p className="text-white/70 text-sm">Australia-wide service</p>
-            </div>
-          </div>
-          <div className="border-t border-teal/20 pt-8 text-center">
-            <p className="text-white text-sm">
-              © 2026 Mitch Harris - Mediawise Solutions. All rights reserved.
-            </p>
+          <div className="service-rows">
+            {areas.map((a) => (
+              <Link key={a.slug} href={`/services/${a.slug}`} className={`service-row tone-${a.tone}`}>
+                <MiniEmblem tone={a.tone} />
+                <div>
+                  <span className="row-stage">{a.stages}</span>
+                  <h3>{a.name}</h3>
+                </div>
+                <p>{blurbs[a.slug]}</p>
+                <Arrow />
+              </Link>
+            ))}
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section className="statement">
+        <div className="container statement-inner">
+          <p className="statement-text">I took a regional sales team to the number one national revenue ranking. Now I help owners do the same with their own business.</p>
+          <div className="statement-by">
+            <p className="by-name">Mitch Harris</p>
+            <p className="by-role">Former General Sales Manager, Southern Cross Austereo. Led a team of 12 and a portfolio of around $7M across Rockhampton, Gladstone and Emerald.</p>
+            <Link className="text-link gold" href="/about">More about me</Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <h2>How it works</h2>
+          <ol className="three-steps">
+            <li>
+              <span className="step-num tone-gold">1</span>
+              <h3>A 20 minute chat</h3>
+              <p>You tell me what&apos;s not working. I tell you straight whether I can help.</p>
+            </li>
+            <li>
+              <span className="step-num tone-teal">2</span>
+              <h3>Find the leaks</h3>
+              <p>I map the chain from enquiry to cash and hand you a prioritised plan. Bespoke, and quoted upfront.</p>
+            </li>
+            <li>
+              <span className="step-num tone-blue">3</span>
+              <h3>Fix them</h3>
+              <p>Part time leadership, project work, or a fixed price automation build. Often a mix.</p>
+            </li>
+          </ol>
+          <p style={{ marginTop: 40 }}><Link className="text-link" href="/who-its-for">Not sure it&apos;s you? See who I work with</Link></p>
+        </div>
+      </section>
+
+      <CtaBand />
     </>
   );
 }

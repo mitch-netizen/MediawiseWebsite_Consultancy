@@ -161,10 +161,19 @@ export const offers: Offer[] = [
 ];
 
 export const bundles = [
-  { name: "Starter", includes: "01 and 03", price: 2950, carePlan: 295, saving: 450 },
-  { name: "Growth", includes: "01, 02 and 03", price: 5450, carePlan: 445, saving: 900 },
-  { name: "Full system", includes: "All five", price: 9750, carePlan: 695, saving: 2000 },
+  { name: "Starter", includes: "01 and 03", price: 2950, carePlan: 295, saving: 450, deposit: 1475, depositPercent: 50, payUrl: "https://book.stripe.com/4gMdRbeHl9Wu1CPccZf7i07" },
+  { name: "Growth", includes: "01, 02 and 03", price: 5450, carePlan: 445, saving: 900, deposit: 2180, depositPercent: 40, payUrl: "https://book.stripe.com/4gM5kFar5c4C1CPfpbf7i08" },
+  { name: "Full system", includes: "All five", price: 9750, carePlan: 695, saving: 2000, deposit: 3900, depositPercent: 40, payUrl: "https://book.stripe.com/bJe3cx42Hb0y81d3Gtf7i09" },
 ];
+
+// Stripe payment links for the booking deposit on each fixed price build (GST added at checkout).
+export const offerPayments: Record<string, { deposit: number; url: string }> = {
+  "never-miss-an-enquiry": { deposit: 975, url: "https://book.stripe.com/aFa28teHl5GegxJ5OBf7i02" },
+  "quotes-out-the-same-day": { deposit: 1475, url: "https://book.stripe.com/dRm5kFgPt4Ca6X91ylf7i03" },
+  "get-paid-faster": { deposit: 725, url: "https://book.stripe.com/5kQaEZ0QvfgOa9lfpbf7i04" },
+  "onboarding-on-autopilot": { deposit: 1475, url: "https://book.stripe.com/cNifZj1Uz5Gecht4Kxf7i05" },
+  "monday-morning-numbers": { deposit: 1225, url: "https://book.stripe.com/aFa5kF8iX0lU95h4Kxf7i06" },
+};
 
 export type Area = {
   slug: string;

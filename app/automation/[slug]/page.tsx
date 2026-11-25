@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { offers, aud, BOOKING_URL, SITE_URL } from "../../lib/content";
+import { offers, offerPayments, aud, BOOKING_URL, SITE_URL } from "../../lib/content";
 import { pageMeta } from "../../lib/seo";
 import JsonLd from "../../components/JsonLd";
 import CtaBand from "../../components/CtaBand";
@@ -62,7 +62,8 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
           <p className="lead" style={{ marginTop: 24 }}>{o.problem}</p>
           <p className="serif">{o.fixes}</p>
           <div className="btn-row">
-            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+            <a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer">Pay {aud(offerPayments[o.slug].deposit)} deposit to book</a>
+            <a className="btn btn-ghost" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
             <Link className="btn btn-ghost" href="/contact">Send an enquiry</Link>
           </div>
         </div>

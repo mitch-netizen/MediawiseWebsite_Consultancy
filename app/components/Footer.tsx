@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ABN, EMAIL, PHONE, PHONE_HREF, areas } from "../lib/content";
+import { ABN, EMAIL, PHONE, PHONE_HREF, LINKEDIN_URL, GOOGLE_PROFILE_URL, areas } from "../lib/content";
 
 export default function Footer() {
   return (
@@ -27,6 +27,8 @@ export default function Footer() {
             <ul>
               <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
               <li><a href={PHONE_HREF}>{PHONE}</a></li>
+              <li><a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">LinkedIn<span className="sr-only"> (opens in a new tab)</span></a></li>
+              <li><a href={GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer">Google profile<span className="sr-only"> (opens in a new tab)</span></a></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/about">About</Link></li>
               <li><Link href="/how-it-works#faq">FAQs</Link></li>

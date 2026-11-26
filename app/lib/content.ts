@@ -1,3 +1,5 @@
+export const LINKEDIN_URL = "https://www.linkedin.com/company/mediawise-solutions/";
+export const GOOGLE_PROFILE_URL = "https://maps.app.goo.gl/Hyzm9KtwaJgj87Lw8?g_st=ac";
 export const SITE_URL = "https://mediawisesolutions.au";
 export const BOOKING_URL =
   "https://outlook.office.com/bookwithme/user/4a69841c8fbc4250b52e5adc7d888f46@mediawisesolutions.au?anonymous";

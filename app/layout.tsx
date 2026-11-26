@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { SITE_URL, EMAIL, ABN, offers } from "./lib/content";
+import { SITE_URL, EMAIL, ABN, offers, LINKEDIN_URL, GOOGLE_PROFILE_URL } from "./lib/content";
 import { OG_IMAGE } from "./lib/seo";
 
 const display = localFont({ src: "./fonts/Fraunces-Full.woff2", variable: "--font-display", weight: "100 900", display: "swap" });
@@ -49,6 +49,7 @@ const structuredData = {
       logo: `${SITE_URL}/logo-horizontal-dark.png`,
       image: `${SITE_URL}/og.png`,
       email: EMAIL,
+      sameAs: [LINKEDIN_URL, GOOGLE_PROFILE_URL],
       telephone: "+61409265711",
       taxID: `ABN ${ABN}`,
       foundingDate: "2023",

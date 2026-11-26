@@ -1,11 +1,55 @@
-import json, uuid, zipfile, datetime
+"""Generates the Power Automate legacy import zips for the Mediawise flows.
+
+    python3 build.py            builds F1, F2, F3, F6, F9, F10 (what is live today)
+    python3 build.py --xero     also builds F4, F7, F8 (needs the Magnetism Xero connector)
+    python3 build.py --out DIR  writes the zips to DIR (default: ops/flows/dist)
+
+No secrets belong in this file. The F6 webhook URL is read from the flow's own trigger
+in Power Automate after import, never from here.
+"""
+import json, uuid, zipfile, datetime, os, sys, argparse
+
+# ===================== CONFIG: the only values you should need to edit =====================
+# Google review link used in the F9 results email. Leave EMPTY until Mitch supplies the real
+# link (Google Business Profile, "Get more reviews", copy the link). While empty, F9 simply
+# leaves the review paragraph out. Do not invent a URL.
+REVIEW = ""
+
+# SMS. Off by default. When an SMS connector exists, set SMS_PROVIDER to "twilio" or
+# "clicksend", rebuild, and import with Update. While None, the zips contain no SMS step and
+# need no SMS connection, so import cannot fail on a missing connector.
+SMS_PROVIDER = None
+SMS_FROM = ""   # Twilio only: your Twilio number in E.164 (for example +61...). ClickSend does not need it.
+
+# Xero (only used by --xero). Tenant ID is shown in the Magnetism connector once connected.
+XERO_TENANT_ID = ""
+XERO_ACCOUNT_CODE = ""      # Xero sales account code for quote and invoice lines. Blank leaves Xero's default.
+DEPOSIT_PCT = 0.5           # F8 final invoice = proposal value x (1 - DEPOSIT_PCT). 0.5 Starter bundle and single offers, 0.4 Growth and Full system.
+HOWTO_URL = ""              # F8: link to the client how to guide. Blank leaves the link out.
+# ===========================================================================================
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--xero", action="store_true")
+_ap.add_argument("--out", default=os.path.join(HERE, "dist"))
+ARGS, _ = _ap.parse_known_args()
+OUT = ARGS.out
+os.makedirs(OUT, exist_ok=True)
 
 SITE = "https://mediawisesolutions667-my.sharepoint.com/personal/mitch_mediawisesolutions_au"
 LIST = "Mediawise Pipeline"
 ME = "mitch@mediawisesolutions.au"
 BOOK = "https://outlook.office.com/bookwithme/user/4a69841c8fbc4250b52e5adc7d888f46@mediawisesolutions.au?anonymous"
 SP, TM, OL = "shared_sharepointonline", "shared_teams", "shared_office365"
-NAMES = {SP: "SharePoint", TM: "Microsoft Teams", OL: "Office 365 Outlook"}
+XR, TW, CS = "shared_xeroaccountingmagnet", "shared_twilio", "shared_clicksendsms"
+NAMES = {SP: "SharePoint", TM: "Microsoft Teams", OL: "Office 365 Outlook", XR: "Xero Accounting - Magnetism", TW: "Twilio", CS: "ClickSend SMS"}
+SMS_API = {"twilio": TW, "clicksend": CS}.get(SMS_PROVIDER)
+assert SMS_PROVIDER in (None, "twilio", "clicksend"), "SMS_PROVIDER must be None, 'twilio' or 'clicksend'"
+if SMS_PROVIDER == "twilio":
+    assert SMS_FROM.startswith("+"), "Twilio needs SMS_FROM in E.164 format"
+if REVIEW:
+    assert REVIEW.startswith("https://"), "REVIEW must be a full https link"
+SMS_APIS = [SMS_API] if SMS_API else []
 TZ = "E. Australia Standard Time"
 M = "outputs('Column_map')"
 
@@ -27,6 +71,28 @@ def email(to, subject, body, after):
 def teams(body, after):
     return conn(TM, "PostMessageToConversation", {"poster": "Flow bot", "location": "Chat with Flow bot", "body/recipient": ME, "body/messageBody": body}, after)
 
+def sms_actions(prefix, mobile_expr, text, after):
+    """Optional SMS step. Returns {} (nothing added, no SMS connection needed) while SMS_PROVIDER is None.
+    When on: turns an Australian mobile into +61 format, sends only to +614 numbers, and never stops the flow if it fails.
+    Operation ids come from the Microsoft connector reference: Twilio SendMessage (from, to, body),
+    ClickSend sms_send (to, body)."""
+    if not SMS_API:
+        return {}
+    d = f"replace(replace(replace(replace(string(coalesce({mobile_expr},'')),' ',''),'-',''),'(',''),')','')"
+    e164 = f"if(startsWith({d},'+'),{d},if(startsWith({d},'0'),concat('+61',substring({d},1)),if(startsWith({d},'61'),concat('+',{d}),'')))"
+    num = f"outputs('{prefix}_number')"
+    if SMS_PROVIDER == "twilio":
+        send = conn(TW, "SendMessage", {"from": SMS_FROM, "to": f"@{{{num}}}", "body": text}, {})
+    else:
+        send = conn(CS, "sms_send", {"to": f"@{{{num}}}", "body": text}, {})
+    return {
+        prefix + "_number": {"type": "Compose", "runAfter": {k: ["Succeeded", "Failed", "Skipped"] for k in after}, "inputs": "@" + e164},
+        prefix + "_send_if_mobile": {"type": "If", "runAfter": {prefix + "_number": ["Succeeded"]},
+            "expression": {"equals": [f"@startsWith({num},'+614')", True]}, "actions": {prefix + "_send": send}, "else": {"actions": {}}},
+    }
+
+SMS_STOP = "Reply STOP to opt out."
+
 def column_map_actions(after):
     """Reads the list's columns so flows can use display names, whatever the internal names are."""
     return {
@@ -37,7 +103,10 @@ def column_map_actions(after):
     }
 
 def safe_fields(prefix, pairs, after):
-    """Returns (actions, body_expr). Writes only to columns that exist on the list, matched by display name."""
+    """Returns (actions, body_expr). Writes only to columns that exist on the list, matched by display name.
+    Only Text, Note, Choice, DateTime and Boolean columns are written. Number, Currency, Integer, URL,
+    Lookup, MultiChoice and anything else are skipped, because a plain string would make SharePoint reject the
+    whole update (and with it the lead or the status change)."""
     vals = "json('{}')"
     for title, val in pairs:
         vals = f"setProperty({vals},'{title}',{val})"
@@ -45,7 +114,7 @@ def safe_fields(prefix, pairs, after):
     enc = f"string(createArray(outputs('{v}')?[item()?['Title']]))"
     acts = {
         v: {"type": "Compose", "runAfter": after, "inputs": "@" + vals},
-        f: {"type": "Query", "runAfter": {v: ["Succeeded"]}, "inputs": {"from": "@body('Get_list_columns')?['value']", "where": f"@and(contains(outputs('{v}'),item()?['Title']),not(contains(createArray('Number','Currency'),item()?['TypeAsString'])))"}},
+        f: {"type": "Query", "runAfter": {v: ["Succeeded"]}, "inputs": {"from": "@body('Get_list_columns')?['value']", "where": f"@and(contains(outputs('{v}'),item()?['Title']),contains(createArray('Text','Note','Choice','DateTime','Boolean'),item()?['TypeAsString']))"}},
         sel: {"type": "Select", "runAfter": {f: ["Succeeded"]}, "inputs": {"from": f"@body('{f}')", "select": f"@concat('\"',item()?['InternalName'],'\":',substring({enc},1,sub(length({enc}),2)))"}},
     }
     return acts, sel, f"@json(concat('{{',join(body('{sel}'),','),'}}'))"
@@ -56,6 +125,7 @@ def sp_update_safe(prefix, id_expr, pairs, after):
     return acts
 
 def package(fname, disp, desc, trigger, actions, apis_used):
+    apis_used = list(dict.fromkeys(apis_used))
     definition = {"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#", "contentVersion": "1.0.0.0",
                   "parameters": {"$connections": {"defaultValue": {}, "type": "Object"}, "$authentication": {"defaultValue": {}, "type": "SecureObject"}},
                   "triggers": trigger, "actions": actions, "outputs": {}}
@@ -65,9 +135,11 @@ def package(fname, disp, desc, trigger, actions, apis_used):
         res[a] = {"id": f"/providers/Microsoft.PowerApps/apis/{api}", "name": api, "type": "Microsoft.PowerApps/apis", "suggestedCreationType": "Existing", "details": {"displayName": NAMES[api], "iconUri": ""}, "configurableBy": "System", "hierarchy": "Child", "dependsOn": []}
         res[c] = {"type": "Microsoft.PowerApps/apis/connections", "suggestedCreationType": "Existing", "creationType": "Existing", "details": {"displayName": NAMES[api], "iconUri": ""}, "configurableBy": "User", "hierarchy": "Child", "dependsOn": [a]}
     res = {flow: {"type": "Microsoft.Flow/flows", "suggestedCreationType": "New", "creationType": "Existing, New, Update", "details": {"displayName": disp}, "configurableBy": "User", "hierarchy": "Root", "dependsOn": list(apis.values()) + list(conns.values())}, **res}
-    manifest = {"schema": "1.0", "details": {"displayName": disp, "description": desc, "createdTime": datetime.datetime.utcnow().isoformat() + "Z", "packageTelemetryId": str(uuid.uuid4()), "creator": "Mediawise Solutions", "sourceEnvironment": ""}, "resources": res}
+    manifest = {"schema": "1.0", "details": {"displayName": disp, "description": desc, "createdTime": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "packageTelemetryId": str(uuid.uuid4()), "creator": "Mediawise Solutions", "sourceEnvironment": ""}, "resources": res}
     fdef = {"name": flow, "id": f"/providers/Microsoft.Flow/flows/{flow}", "type": "Microsoft.Flow/flows", "properties": {"apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows", "displayName": disp, "definition": definition, "connectionReferences": {api: {"connectionName": f"shared-{api.split('_')[1]}-{uuid.uuid4()}", "source": "Invoker", "id": f"/providers/Microsoft.PowerApps/apis/{api}", "tier": "NotSpecified"} for api in apis_used}, "flowFailureAlertSubscribed": False}}
-    with zipfile.ZipFile(f"/home/claude/flows/{fname}", "w", zipfile.ZIP_DEFLATED) as z:
+    zpath = os.path.join(OUT, fname)
+    os.makedirs(os.path.dirname(zpath), exist_ok=True)
+    with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("manifest.json", json.dumps(manifest, indent=1))
         z.writestr("Microsoft.Flow/flows/manifest.json", json.dumps({"packageSchemaVersion": "1.0", "flowAssets": {"assetPaths": [flow]}}))
         z.writestr(f"Microsoft.Flow/flows/{flow}/definition.json", json.dumps(fdef, indent=1))
@@ -76,6 +148,7 @@ def package(fname, disp, desc, trigger, actions, apis_used):
     # sanity: every expression's parentheses balance
     txt = json.dumps(definition)
     assert txt.count("(") == txt.count(")"), fname
+    assert "createArray()" not in txt, fname + ": createArray() with no arguments, use json('[]')"
     print("built", fname)
 
 SIG = "<p>Cheers,<br>Mitch Harris<br>Mediawise Solutions<br>0409 265 711</p>"
@@ -113,20 +186,24 @@ f1_actions.update(cm)
 fa, last, body = safe_fields("Lead", f1_pairs, {"Column_map": ["Succeeded"]})
 f1_actions.update(fa)
 f1_actions["Create_pipeline_item"] = conn(SP, "HttpRequest", {"dataset": SITE, "parameters/method": "POST", "parameters/uri": f"_api/web/lists/getbytitle('{LIST}')/items", "parameters/headers": {"Accept": "application/json;odata=nometadata", "Content-Type": "application/json;odata=nometadata"}, "parameters/body": body}, {last: ["Succeeded"]})
-f1_actions["Columns_not_found"] = {"type": "Query", "runAfter": {"Create_pipeline_item": ["Succeeded"]}, "inputs": {"from": "@createArray(" + ",".join(f"'{t}'" for t in expected) + ")", "where": f"@empty({M}?[item()])"}}
+f1_actions["Columns_not_found"] = {"type": "Query", "runAfter": {"Create_pipeline_item": ["Succeeded", "Failed", "Skipped"]}, "inputs": {"from": "@createArray(" + ",".join(f"'{t}'" for t in expected) + ")", "where": f"@empty({M}?[item()])"}}
 f1_actions["Alert_Mitch_in_Teams"] = teams(
     f"<p><b>New lead: @{{{biz}}}</b></p><p>@{{{g('q3_fullname1')}?['first']}} @{{{g('q3_fullname1')}?['last']}} | @{{{g('q4_phone2')}?['full']}} | @{{{g('q5_email3')}}}</p>"
     f"<p>Industry: @{{{g('q6_dropdown4')}}}<br>Time drain: @{{{TD}}}<br>Note: @{{{g('q8_textarea6')}}}<br>Ad: @{{{g('q11_textbox9')}}}</p>"
-    "<p>Added to the pipeline as Contacted.</p>"
+    "<p>@{if(equals(actions('Create_pipeline_item')?['status'],'Succeeded'),'Added to the pipeline as Contacted.','<b>The pipeline row was NOT created. Add this lead by hand.</b>')}</p>"
     "@{if(empty(body('Columns_not_found')),'',concat('<p><b>Fix your list:</b> these columns were not found, so they were skipped: ',join(body('Columns_not_found'),', '),'</p>'))}",
-    {"Columns_not_found": ["Succeeded"]})
+    {"Columns_not_found": ["Succeeded", "Failed", "Skipped"]})
+# Optional SMS to the lead with the booking link. Off until SMS_PROVIDER is set.
+f1_actions.update(sms_actions("Lead_sms", f"{g('q4_phone2')}?['full']",
+    f"@{{concat('Hi ',coalesce({g('q3_fullname1')}?['first'],'there'),', thanks for getting in touch. It is Mitch from Mediawise Solutions. Grab a 20 minute chat here: {BOOK} {SMS_STOP}')}}",
+    ["Create_pipeline_item"]))
 f1_actions["If_answers_came_through_blank"] = {"type": "If", "runAfter": {"Alert_Mitch_in_Teams": ["Succeeded", "Failed"]},
     "expression": {"equals": [f"@empty({biz})", True]},
     "actions": {"Email_Mitch_the_raw_data": email(ME, "F1 check: raw enquiry data",
         "<p>F1 couldn't read the form answers. This is what Jotform sent, for Claude to look at.</p><p><b>rawRequest:</b></p><pre>@{outputs('Raw_request')}</pre><p><b>Full request:</b></p><pre>@{string(triggerBody())}</pre><p><b>Form fields:</b></p><pre>@{string(triggerOutputs()?['body']?['$multipart'])}</pre>", {})},
     "else": {"actions": {}}}
 package("F1_Mediawise_New_lead.zip", "F1 Mediawise New lead", "Jotform enquiry to Mediawise Pipeline list and Teams alert",
-        {"manual": {"type": "Request", "kind": "Http", "inputs": {"method": "POST"}}}, f1_actions, [SP, TM, OL])
+        {"manual": {"type": "Request", "kind": "Http", "inputs": {"method": "POST"}}}, f1_actions, [SP, TM, OL] + SMS_APIS)
 
 # ---------------- F2 Lead nudge ----------------
 I = "items('For_each_lead')"
@@ -145,6 +222,10 @@ for d, (subj, body) in f2_emails.items():
     acts = {"Send_day_" + d: email(f"@{{{col(I,'Email')}}}", subj, body, {})}
     if d == "7":
         acts.update(sp_update_safe("Nurture", f"{I}?['ID']", [("Stage", "'Nurture'"), ("Next action date", "formatDateTime(addDays(utcNow(),30),'yyyy-MM-dd')")], {"Send_day_7": ["Succeeded"]}))
+    if d == "3":
+        acts.update(sms_actions("Day3_sms", col(I, "Mobile"),
+            f"@{{concat('Hi ',{first},', Mitch from Mediawise Solutions here. Still keen to help with the admin eating your week. Book a quick chat: {BOOK} {SMS_STOP}')}}",
+            ["Send_day_3"]))
     cases["Day_" + d] = {"case": int(d), "actions": acts}
 f2_actions = column_map_actions({})
 f2_actions["Contacted_leads_not_booked"] = {"type": "Query", "runAfter": {"Get_pipeline_items": ["Succeeded"]}, "inputs": {"from": "@body('Get_pipeline_items')?['value']", "where": f"@and(equals(item()?[coalesce({M}?['Stage'],'__none__')],'Contacted'),empty(item()?[coalesce({M}?['Discovery date'],'__none__')]),not(empty(item()?[coalesce({M}?['Email'],'__none__')])))"}}
@@ -152,7 +233,7 @@ f2_actions["For_each_lead"] = {"type": "Foreach", "foreach": "@body('Contacted_l
     "actions": {"Days_since_enquiry": {"type": "Switch", "expression": f"@{days}", "cases": cases, "default": {"actions": {}}, "runAfter": {}}}}
 package("F2_Mediawise_Lead_nudge.zip", "F2 Mediawise Lead nudge", "Daily follow up emails for leads who haven't booked a discovery call",
         {"Recurrence": {"type": "Recurrence", "recurrence": {"frequency": "Day", "interval": 1, "schedule": {"hours": ["8"], "minutes": [0]}, "timeZone": TZ}}},
-        f2_actions, [SP, OL])
+        f2_actions, [SP, OL] + SMS_APIS)
 
 # ---------------- F3 Discovery booked ----------------
 T = "triggerOutputs()?['body']"
@@ -167,7 +248,7 @@ f3_actions["If_a_lead_booked"] = {"type": "If", "runAfter": {"Find_matching_lead
         **sp_update_safe("Booked", f"{L3}?['ID']", [("Stage", "'Discovery booked'"), ("Discovery date", f"concat({T}?['start'],'Z')"), ("Next action date", f"formatDateTime({T}?['start'],'yyyy-MM-dd')")], {}),
         "Send_prep_email": email(f"@{{{L3}?[coalesce({M}?['Email'],'__none__')]}}", "Before our chat",
             f"<p>Hi @{{{lead_first}}},</p><p>Looking forward to our chat on @{{formatDateTime(convertFromUtc(concat({T}?['start'],'Z'),'{TZ}'),'dddd d MMMM')}} at @{{formatDateTime(convertFromUtc(concat({T}?['start'],'Z'),'{TZ}'),'h:mm tt')}}.</p><p>If you've got a minute beforehand, have a think about these three. No need to write anything down:</p><ol><li>What's the one job that eats the most hours in your week?</li><li>Roughly how many enquiries or jobs come through in a normal week?</li><li>Which systems do you run on now, for example Microsoft 365, Xero or a job system?</li></ol><p>That's it. See you then.</p>{SIG}",
-            {"Booked_save": ["Succeeded"]}),
+            {"Booked_save": ["Succeeded", "Failed"]}),
         "Wait_until_30_minutes_before": {"type": "Wait", "runAfter": {"Send_prep_email": ["Succeeded"]}, "inputs": {"until": {"timestamp": f"@{{addMinutes(concat({T}?['start'],'Z'),-30)}}"}}},
         "Remind_Mitch_in_Teams": teams(
             f"<p><b>Discovery call in 30 minutes: @{{{L3}?['Title']}}</b></p><p>@{{{L3}?[coalesce({M}?['Contact name'],'__none__')]}} | @{{{L3}?[coalesce({M}?['Mobile'],'__none__')]}} | @{{{L3}?[coalesce({M}?['Email'],'__none__')]}}</p><p>Industry: @{{{L3}?[coalesce({M}?['Industry'],'__none__')]}}<br>Biggest time drain: @{{{L3}?[coalesce({M}?['Biggest time drain'],'__none__')]}}<br>Source: @{{{L3}?[coalesce({M}?['Source'],'__none__')]}} @{{{L3}?[coalesce({M}?['Campaign'],'__none__')]}}<br>Notes: @{{{L3}?[coalesce({M}?['Notes'],'__none__')]}}</p>",
@@ -219,7 +300,6 @@ package("F10_Mediawise_Monday_numbers.zip", "F10 Mediawise Monday numbers", "Mon
 LIB = "/personal/mitch_mediawisesolutions_au/Documents"
 NL = "decodeUriComponent('%0A')"
 TEMPLATE = "/Documents/Templates/Mediawise Results Report Template.docx"
-REVIEW = ""  # Google review link, added once Mitch supplies it
 def clean(x):
     e = f"coalesce({x},'Unnamed client')"
     for ch in ["/", "\\", ":", "*", "?", '"', "<", ">", "|", "#", "%"]:
@@ -273,7 +353,7 @@ f6["Save_answers_to_client_folder"] = sp_create_file("@" + FOLDER, "Onboarding a
 UP = "items('For_each_upload')"
 f6["Uploads"] = {"type": "Compose", "runAfter": {"Save_answers_to_client_folder": ["Succeeded", "Failed"]}, "inputs": "@" + arr(f"coalesce({G(20, 'logoCurrent')},{J}?['temp_upload']?['q20_logoCurrent'])")}
 f6["Links_not_saved"] = {"type": "InitializeVariable", "runAfter": {"Uploads": ["Succeeded", "Failed"]}, "inputs": {"variables": [{"name": "LinksNotSaved", "type": "string", "value": ""}]}}
-f6["For_each_upload"] = {"type": "Foreach", "foreach": "@outputs('Uploads')", "runAfter": {"Links_not_saved": ["Succeeded"]}, "actions": {
+f6["For_each_upload"] = {"type": "Foreach", "foreach": "@outputs('Uploads')", "runAfter": {"Links_not_saved": ["Succeeded"]}, "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
     "Download_file": {"type": "Http", "runAfter": {}, "inputs": {"method": "GET", "uri": f"@{UP}"}},
     "If_it_is_a_real_file": {"type": "If", "runAfter": {"Download_file": ["Succeeded", "Failed"]},
         "expression": {"and": [{"equals": ["@outputs('Download_file')?['statusCode']", 200]}, {"not": {"contains": ["@toLower(string(outputs('Download_file')?['headers']?['Content-Type']))", "text/html"]}}]},
@@ -293,7 +373,7 @@ new_acts["Create_client_row"] = sp_create_item(new_body, {new_last: ["Succeeded"
 f6["If_client_is_in_the_pipeline"] = {"type": "If", "runAfter": {"For_each_upload": ["Succeeded", "Failed", "Skipped"]}, "expression": {"greater": ["@length(body('Find_client_row'))", 0]},
     "actions": upd_acts, "else": {"actions": new_acts}}
 first6 = f"coalesce({CN}?['first'],'there')"
-f6["If_access_is_missing"] = {"type": "If", "runAfter": {"If_client_is_in_the_pipeline": ["Succeeded", "Failed"]}, "expression": {"equals": ["@outputs('Access_gaps')", True]},
+f6["If_access_is_missing"] = {"type": "If", "runAfter": {"If_client_is_in_the_pipeline": ["Succeeded", "Failed"]}, "expression": {"and": [{"equals": ["@outputs('Access_gaps')", True]}, {"equals": [f"@empty(trim(coalesce({EM},'')))", False]}]},
     "actions": {"Email_client_the_access_list": email(f"@{{{EM}}}", "One thing before we kick off",
         f"<p>Hi @{{{first6}}},</p><p>Thanks for filling in the onboarding form. That's most of the setup done.</p>"
         f"<p>To get started I still need access to:</p><ul>@{{join(body('Missing_access_list'),'')}}</ul>"
@@ -309,7 +389,7 @@ f6["Alert_Mitch_in_Teams"] = teams(
     f"<p>@{{if(outputs('Access_gaps'),concat('<b>Access still missing:</b> ',join(body('Missing_access'),', '),' ',coalesce({NOACCESS},''),'. I emailed them the list and set a follow up in 3 days.'),'All system access confirmed.')}}</p>"
     f"<p>@{{if(greater(length(body('Find_client_row')),0),'Pipeline row moved to Onboarding.','No matching pipeline row, so I added a new one at Onboarding.')}} <a href=\"@{{{FOLDER_URL}}}\">Client folder</a></p>"
     "@{if(empty(variables('LinksNotSaved')),'',concat('<p>These uploads need saving by hand (Jotform wants a login to download them):</p><ul>',variables('LinksNotSaved'),'</ul>'))}"
-    "@{if(or(equals(outputs('Save_answers_to_client_folder')?['statusCode'],null),less(coalesce(outputs('Save_answers_to_client_folder')?['statusCode'],500),300)),'','<p><b>Heads up:</b> the client folder could not be created.</p>')}",
+    "@{if(equals(actions('Save_answers_to_client_folder')?['status'],'Succeeded'),'','<p><b>Heads up:</b> the onboarding answers file could not be saved to the client folder (it may already exist from an earlier submission).</p>')}",
     {"If_access_is_missing": ["Succeeded", "Failed", "Skipped"]})
 f6["If_answers_came_through_blank"] = {"type": "If", "runAfter": {"Alert_Mitch_in_Teams": ["Succeeded", "Failed"]},
     "expression": {"equals": [f"@empty({B6})", True]},
@@ -325,17 +405,18 @@ C = lambda it, t: f"{it}?[coalesce({M}?['{t}'],'__none__')]"
 today_local = f"formatDateTime(convertFromUtc(utcNow(),'{TZ}'),'yyyy-MM-dd')"
 f9 = column_map_actions({})
 f9["Due_for_a_report"] = {"type": "Query", "runAfter": {"Get_pipeline_items": ["Succeeded"]}, "inputs": {"from": f"@{V9}",
-    "where": f"@and(equals({C('item()','Stage')},'Live'),not(empty({C('item()','Go live date')})),lessOrEquals(formatDateTime(convertFromUtc(coalesce({C('item()','Go live date')},'2999-01-01T00:00:00Z'),'{TZ}'),'yyyy-MM-dd'),formatDateTime(addDays(convertFromUtc(utcNow(),'{TZ}'),-30),'yyyy-MM-dd')),empty({C('item()','30 day result')}),not(contains(coalesce({C('item()','Notes')},''),'[Report draft created')))"}}
+    "where": f"@and(not(empty({M}?['Notes'])),equals({C('item()','Stage')},'Live'),not(empty({C('item()','Go live date')})),lessOrEquals(formatDateTime(convertFromUtc(coalesce({C('item()','Go live date')},'2999-01-01T00:00:00Z'),'{TZ}'),'yyyy-MM-dd'),formatDateTime(addDays(convertFromUtc(utcNow(),'{TZ}'),-30),'yyyy-MM-dd')),empty({C('item()','30 day result')}),not(contains(coalesce({C('item()','Notes')},''),'[Report draft created')))"}}
 f9["Ready_to_send"] = {"type": "Query", "runAfter": {"Due_for_a_report": ["Succeeded"]}, "inputs": {"from": f"@{V9}",
-    "where": f"@and(equals({C('item()','Stage')},'Live'),not(empty({C('item()','30 day result')})),not(contains(coalesce({C('item()','Notes')},''),'[Results report sent')))"}}
+    "where": f"@and(not(empty({M}?['Notes'])),not(empty({C('item()','Email')})),equals({C('item()','Stage')},'Live'),not(empty({C('item()','30 day result')})),not(contains(coalesce({C('item()','Notes')},''),'[Results report sent')))"}}
 f9["Get_report_template"] = sp_get_file(TEMPLATE, {"Ready_to_send": ["Succeeded"]})
+f9["Template_missing_alert"] = teams("<p><b>F9 could not open the Mediawise Results Report Template.docx</b> in Documents/Templates. Report drafts are paused until it is back. Client results emails still go out.</p>", {"Get_report_template": ["Failed"]})
 R = "items('For_each_report_due')"
 FN = lambda it: f"if(empty(coalesce({C(it,'Client folder')},'')),{clean(it + '?[' + chr(39) + 'Title' + chr(39) + ']')},decodeUriComponent(last(split({C(it,'Client folder')},'/'))))"
 RN = FN(R)
 rep_name = lambda n: f"concat({n},' 30 Day Results.docx')"
 d_acts, d_last, d_body = safe_fields("Draft", [("Notes", f"concat(coalesce({C(R,'Notes')},''),{NL},'[Report draft created ',{today_local},']')"), ("Next action date", "formatDateTime(addDays(utcNow(),2),'yyyy-MM-dd')")], {"Create_report_draft": ["Succeeded"]})
 d_acts["Draft_save"] = sp_update(f"{R}?['ID']", d_body, {d_last: ["Succeeded"]})
-f9["For_each_report_due"] = {"type": "Foreach", "foreach": "@body('Due_for_a_report')", "runAfter": {"Get_report_template": ["Succeeded"]}, "actions": {
+f9["For_each_report_due"] = {"type": "Foreach", "foreach": "@body('Due_for_a_report')", "runAfter": {"Get_report_template": ["Succeeded"]}, "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
     "Create_report_draft": sp_create_file(f"@concat('/Documents/Clients/',{RN})", f"@{{{rep_name(RN)}}}", "@body('Get_report_template')", {}),
     **d_acts,
     "Tell_Mitch_the_report_is_due": teams(
@@ -348,6 +429,8 @@ S = "items('For_each_report_ready')"
 SN = FN(S)
 first9 = f"first(split(coalesce({C(S,'Contact name')},'there'),' '))"
 care = f"if(empty(string(coalesce({C(S,'Care plan per month ex GST')},''))),'',concat(' for ',formatNumber(float({C(S,'Care plan per month ex GST')}),'C0','en-AU'),' plus GST a month'))"
+if not REVIEW:
+    print("note: REVIEW is empty, so F9 leaves the Google review paragraph out")
 review_html = f"<p>And one favour: if you're happy with how it's going, a short <a href=\"{REVIEW}\">Google review</a> helps a small regional business like mine more than you'd think.</p>" if REVIEW else ""
 body9 = (f"<p>Hi @{{{first9}}},</p><p>It's been 30 days since your new setup went live, so here's how it's tracking.</p>"
          f"<p><b>The short version:</b> @{{{C(S,'30 day result')}}}</p>"
@@ -358,7 +441,7 @@ s_acts, s_last, s_body = safe_fields("Sent", [("Notes", f"concat(coalesce({C(S,'
 s_acts["Sent_save"] = sp_update(f"{S}?['ID']", s_body, {s_last: ["Succeeded"]})
 send_with = email(f"@{{{C(S,'Email')}}}", f"Your 30 day results", body9, {"Get_report_file": ["Succeeded"]})
 send_with["inputs"]["parameters"]["emailMessage/Attachments"] = [{"Name": f"@{{{rep_name(SN)}}}", "ContentBytes": "@body('Get_report_file')"}]
-f9["For_each_report_ready"] = {"type": "Foreach", "foreach": "@body('Ready_to_send')", "runAfter": {"For_each_report_due": ["Succeeded", "Failed"]}, "actions": {
+f9["For_each_report_ready"] = {"type": "Foreach", "foreach": "@body('Ready_to_send')", "runAfter": {"For_each_report_due": ["Succeeded", "Failed", "Skipped"]}, "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
     "Get_report_file": sp_get_file(f"@{{concat('/Documents/Clients/',{SN},'/',{rep_name(SN)})}}", {}),
     "Send_with_report": send_with,
     "Send_without_attachment": email(f"@{{{C(S,'Email')}}}", "Your 30 day results", body9.replace("The full report is attached, with the before and after numbers.", "I'll send the full report with the before and after numbers separately."), {"Send_with_report": ["Skipped", "Failed"]}),
@@ -368,3 +451,10 @@ f9["For_each_report_ready"] = {"type": "Foreach", "foreach": "@body('Ready_to_se
 package("F9_Mediawise_Results_report.zip", "F9 Mediawise Results report", "30 days after go live: report draft for Mitch, then the results email to the client",
         {"Recurrence": {"type": "Recurrence", "recurrence": {"frequency": "Day", "interval": 1, "schedule": {"hours": ["8"], "minutes": [20]}, "timeZone": TZ}}},
         f9, [SP, TM, OL])
+
+
+# ---------------- Xero flows (F4, F7, F8): only with --xero ----------------
+if ARGS.xero:
+    exec(compile(open(os.path.join(HERE, "xero_flows.py")).read(), "xero_flows.py", "exec"), globals())
+else:
+    print("note: F4, F7, F8 not built (they need the Xero connector). Use --xero once it is connected.")

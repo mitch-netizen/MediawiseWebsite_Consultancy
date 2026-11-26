@@ -102,7 +102,9 @@ Column titles have NO brackets ("Proposal value ex GST", not "(ex GST)").
 
 ### Flows
 
-`ops/flows/build.py` generates the legacy import zips for every flow (`python3 build.py`).
+`ops/flows/build.py` generates the legacy import zips for every flow (`python3 build.py`, output in `ops/flows/dist/`, ignored by git). `python3 validate.py` checks them. `build.py --xero` builds F4, F7 and F8 once `XERO_TENANT_ID` is set. Full steps and test checklists are in `ops/README.md`. F5 is a spec only: `ops/specs/F5_Won.md`. SMS steps in F1 and F2 stay off until `SMS_PROVIDER` is set. Review link: set `REVIEW` in the config block.
+
+Updated 26 Nov: the six live flows were hardened (see ops/README.md) and need redeploying with Update, then turning back on.
 
 How the flows are written:
 - Every flow looks up columns by display title at run time (column map), so internal names aren't hard coded.

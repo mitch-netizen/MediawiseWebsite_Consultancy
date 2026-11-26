@@ -3,7 +3,7 @@
 Owner: Mitch Harris, sole trader, ABN 27 565 980 600. Business email mitch@mediawisesolutions.au (mitch.harris@outlook.com.au bounces, don't use it).
 Mitch is on a Mac. He prefers Australian English, no corporate jargon, and no dashes in emails or messages written for him. Never enter passwords; he signs in himself.
 
-Last updated 25 Nov 2026.
+Last updated 26 Nov 2026.
 
 ## 1. Website (this repo)
 
@@ -51,6 +51,14 @@ Monthly subscriptions, `tax_behavior: exclusive`, GST added at checkout, busines
 - All 8 deposit prices are `tax_behavior: exclusive`, which is "Include tax in price: No".
 - The AU GST registration is active, so GST (10%) is added at checkout once the customer enters a billing address. Verified with a tax calculation: $975 becomes $1,072.50.
 - Don't recreate prices. That creates new links, and all 8 links on the site would need swapping.
+
+### Decisions (26 Nov)
+
+- Campaign: 30 day run from 30 Nov, $1,500 ad budget, leading with offer 03 then 01. Landing page is `/get-paid-faster-chat/` (noindex, chat first, no deposit button above the fold). UTM tags (`utm_source`, `utm_campaign`, `utm_content`) pass into the Jotform hidden fields via `app/components/EnquiryForm.tsx`; the fields map to Source, Campaign and the Ad note in the pipeline. Naming rules: lowercase, underscores, source = channel and medium (for example `linkedin_dm`, `google_cpc`).
+- Final payment (50% at go live) is a Xero invoice from F8, with F7 ticking it paid. Deposits stay on Stripe.
+- Referral partners (accountants and bookkeepers): 10% of the setup price on a sold build. Draft terms before using.
+- SMS: Mitch is setting up the connector this week. Site wording keeps "email and SMS" until then.
+- Still needed from Mitch: LinkedIn and Google Business Profile URLs (for site footer and structured data).
 
 ### Website to do
 
@@ -133,7 +141,8 @@ Deploying an updated flow:
 - [ ] **F6 webhook.** In Jotform, on the "Mediawise Solutions: Client Onboarding" form (263265428227056), go to Settings, then Integrations, then WebHooks, and add F6's HTTP trigger URL. Get the URL from F6's "manual" trigger in Power Automate. It contains a signature: treat it as a secret and never commit it. Mitch has to do this; the browser pane isn't signed in to Jotform and the Jotform connector can't add webhooks.
 - [ ] **Google review link.** Set `REVIEW` in `ops/flows/build.py`, rebuild F9 and redeploy with Update.
 - [ ] **Uploads.** If Jotform requires login to view uploads, F6 lists the upload links in Teams instead of saving them.
-- [ ] **Test data cleanup** (ask Mitch before deleting):
+- [x] **Test data cleanup** (26 Nov, Mitch approved): deleted the two TEST OneDrive folders (recycle bin), 3 test calendar events and 8 test email copies (Deleted Items). **Still to do by hand:** pipeline rows 1 to 3 and the test Jotform submissions (no connector access from here).
+- Original list:
   - Pipeline row 3 "TEST Flow Check" (now Live, care plan $295) and junk rows 1 and 2.
   - OneDrive folders `Clients/TEST Onboarding Check` and `Clients/TEST Flow Check`.
   - Test calendar events on 25 Nov.

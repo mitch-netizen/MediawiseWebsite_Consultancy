@@ -175,6 +175,19 @@ export const offerPayments: Record<string, { deposit: number; url: string }> = {
   "monday-morning-numbers": { deposit: 1225, url: "https://book.stripe.com/aFa5kF8iX0lU95h4Kxf7i06" },
 };
 
+// Stripe payment links for monthly care plans (GST added at checkout, 3 month minimum).
+// Not shown on the public site: send the link at go live, because it charges straight away.
+export const carePlanLinks: Record<string, { monthly: number; url: string }> = {
+  "never-miss-an-enquiry": { monthly: 195, url: "https://buy.stripe.com/00waEZ2YDgkSbdp0uhf7i0a" },
+  "quotes-out-the-same-day": { monthly: 195, url: "https://buy.stripe.com/00wbJ342H0lUftF1ylf7i0b" },
+  "get-paid-faster": { monthly: 145, url: "https://buy.stripe.com/3cIeVf2YDfgOgxJ7WJf7i0c" },
+  "onboarding-on-autopilot": { monthly: 195, url: "https://buy.stripe.com/14AeVf0Qv5GeepBdh3f7i0d" },
+  "monday-morning-numbers": { monthly: 295, url: "https://buy.stripe.com/14A28tar59Wua9lccZf7i0e" },
+  starter: { monthly: 295, url: "https://buy.stripe.com/7sYeVffLp2u26X990Nf7i0f" },
+  growth: { monthly: 445, url: "https://buy.stripe.com/cNifZjfLpecKbdp4Kxf7i0g" },
+  full: { monthly: 695, url: "https://buy.stripe.com/9B614p7eT7Om5T5dh3f7i0h" },
+};
+
 export type Area = {
   slug: string;
   name: string;

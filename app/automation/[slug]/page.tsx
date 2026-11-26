@@ -39,7 +39,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
           price: o.price,
           priceCurrency: "AUD",
           priceSpecification: { "@type": "PriceSpecification", price: o.price, priceCurrency: "AUD", valueAddedTaxIncluded: false },
-          description: `Fixed price, live in ${o.weeks} weeks. Optional care plan from ${aud(o.carePlan)} plus GST a month.`,
+          description: `Fixed price, live in ${o.weeks} weeks. Optional care plan ${aud(o.carePlan)} plus GST a month.`,
         },
       },
       {
@@ -84,7 +84,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
             <div className="card featured" style={{ marginBottom: 24 }}>
               <span className="eyebrow">Fixed price</span>
               <div className="price-tag" style={{ marginTop: 0 }}>{aud(o.price)} <span className="small muted">+ GST</span></div>
-              <p style={{ marginTop: 16 }}>Live in {o.weeks} weeks (day {o.goLiveDay} from kickoff). Optional care plan from {aud(o.carePlan)} + GST a month after that.</p>
+              <p style={{ marginTop: 16 }}>Live in {o.weeks} weeks (day {o.goLiveDay} from kickoff). Optional care plan {aud(o.carePlan)} + GST a month after that.</p>
               <p className="muted small" style={{ marginBottom: 0 }}>50% deposit to book your start date, 50% on go live.</p>
             </div>
             <h3>What we measure</h3>

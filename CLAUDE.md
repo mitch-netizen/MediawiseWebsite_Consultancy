@@ -30,6 +30,21 @@ Last updated 25 Nov 2026.
 | Growth bundle | $5,450 | $2,180 (40%) | https://book.stripe.com/4gM5kFar5c4C1CPfpbf7i08 |
 | Full system bundle | $9,750 | $3,900 (40%) | https://book.stripe.com/bJe3cx42Hb0y81d3Gtf7i09 |
 
+### Care plan links (created 26 Nov, live, kept off the public site)
+
+Monthly subscriptions, `tax_behavior: exclusive`, GST added at checkout, business name and billing address collected. 3 month minimum is stated at checkout, not enforced by Stripe, so cancel by hand if needed. Send the link at go live (it charges straight away). Links are in `carePlanLinks` in `app/lib/content.ts`.
+
+| Plan | Per month ex GST | Link |
+|---|---|---|
+| 01 Never miss an enquiry | $195 | https://buy.stripe.com/00waEZ2YDgkSbdp0uhf7i0a |
+| 02 Quotes out the same day | $195 | https://buy.stripe.com/00wbJ342H0lUftF1ylf7i0b |
+| 03 Get paid faster | $145 | https://buy.stripe.com/3cIeVf2YDfgOgxJ7WJf7i0c |
+| 04 Onboarding on autopilot | $195 | https://buy.stripe.com/14AeVf0Qv5GeepBdh3f7i0d |
+| 05 Monday morning numbers | $295 | https://buy.stripe.com/14A28tar59Wua9lccZf7i0e |
+| Starter bundle | $295 | https://buy.stripe.com/7sYeVffLp2u26X990Nf7i0f |
+| Growth bundle | $445 | https://buy.stripe.com/cNifZjfLpecKbdp4Kxf7i0g |
+| Full system bundle | $695 | https://buy.stripe.com/9B614p7eT7Om5T5dh3f7i0h |
+
 ### Stripe
 
 - Live account `acct_1ObOSfS0NVGGcfVp`.
@@ -39,7 +54,7 @@ Last updated 25 Nov 2026.
 
 ### Website to do
 
-- [ ] Mitch was asked whether the deposit buttons should read "Pay $975 + GST deposit". Waiting on his answer.
+- [x] Deposit buttons now read "Pay $975 + GST deposit" (live 26 Nov).
 - [ ] Stripe business profile still lists mediawisesolutions.com.au. Suggest changing it to .au; Mitch does this in Stripe himself.
 - [ ] Jotform enquiry form: the source and utm fields appear visible. They should be hidden.
 - [ ] Content marketing strategy doc (12 articles): https://claude.ai/artifact/7juvdwr9GSmBiGj5Djr4cR

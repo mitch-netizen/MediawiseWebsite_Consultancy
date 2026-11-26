@@ -53,7 +53,7 @@ export default function Header() {
           {links.map((l) => (
             <Link key={l.href} href={l.href}>{l.label}</Link>
           ))}
-          <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a call</a>
+          <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a call<span className="sr-only"> (opens in a new tab)</span></a>
         </nav>
         <button className="menu-toggle" aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(!open)}>
           {open ? "Close" : "Menu"}
@@ -66,7 +66,7 @@ export default function Header() {
         {[...mobileExtra, ...links].map((l) => (
           <Link key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</Link>
         ))}
-        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
       </nav>
     </header>
   );

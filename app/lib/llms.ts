@@ -1,4 +1,4 @@
-import { SITE_URL, EMAIL, PHONE, ABN, areas, offers, faqs, aud, bundles } from "./content";
+import { SITE_URL, EMAIL, PHONE, ABN, areas, offers, faqs, aud, bundles, paymentSchedule } from "./content";
 
 export function llmsSummary() {
   return `# Mediawise Solutions
@@ -62,7 +62,16 @@ Measured: ${o.measure}.
 Price: ${aud(o.price)} plus GST setup. Optional care plan ${aud(o.carePlan)} plus GST a month. Live in ${o.weeks} weeks.
 `).join("\n")}
 ### Bundles
-${bundles.map((b) => `- ${b.name} (builds ${b.includes}): ${aud(b.price)} plus GST, saving ${aud(b.saving)}. Care plan ${aud(b.carePlan)} a month.`).join("\n")}
+${bundles.map((b) => `- ${b.name} (builds ${b.includes}): ${aud(b.price)} plus GST, saving ${aud(b.saving)}. Care plan ${aud(b.carePlan)} plus GST a month. Payment: ${paymentSchedule(b.depositPercent)}.`).join("\n")}
+
+## Payment terms (automation builds)
+- All prices are in AUD and exclude GST. GST (10%) is added at checkout.
+- Single builds: 50% deposit to book the start date, 50% on go live.
+- Bundles over $5,000: 40% deposit, 30% at build complete, 30% on go live.
+- Invoices are due in 7 days.
+- Care plans are optional, start after 14 days of included support, have a 3 month minimum, then run month to month with 30 days notice. Extra work is $150 an hour.
+- Software subscriptions are in the client's name and paid by the client.
+- Marketing, sales, diagnostics and part time leadership work is bespoke and quoted to suit.
 
 ## Frequently asked questions
 ${faqs.map((f) => `### ${f.q}\n${f.a}`).join("\n\n")}

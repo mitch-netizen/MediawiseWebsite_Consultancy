@@ -13,7 +13,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const o = offers.find((x) => x.slug === slug);
-  return o ? pageMeta(`/automation/${o.slug}`, `${o.name}: Fixed Price Automation`, `${o.fixes} Fixed price ${aud(o.price)} plus GST, built in Power Automate and live in ${o.weeks} weeks.`) : {};
+  return o ? pageMeta(`/automation/${o.slug}`, `${o.name}: Fixed Price`, `Fixed price ${aud(o.price)} plus GST, built in Power Automate and live in ${o.weeks} weeks. ${o.headline}`.slice(0, 160)) : {};
 }
 
 export default async function OfferPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -21,7 +21,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
   const o = offers.find((x) => x.slug === slug);
   if (!o) notFound();
   const others = offers.filter((x) => x.slug !== o.slug);
-  const url = `${SITE_URL}/automation/${o.slug}`;
+  const url = `${SITE_URL}/automation/${o.slug}/`;
   const ld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -46,7 +46,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-          { "@type": "ListItem", position: 2, name: "Automation builds", item: `${SITE_URL}/automation` },
+          { "@type": "ListItem", position: 2, name: "Automation builds", item: `${SITE_URL}/automation/` },
           { "@type": "ListItem", position: 3, name: o.name, item: url },
         ],
       },
@@ -63,7 +63,7 @@ export default async function OfferPage({ params }: { params: Promise<{ slug: st
           <p className="serif">{o.fixes}</p>
           <div className="btn-row">
             <a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer">Pay {aud(offerPayments[o.slug].deposit)} + GST deposit to book</a>
-            <a className="btn btn-ghost" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+            <a className="btn btn-ghost" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
             <Link className="btn btn-ghost" href="/contact">Send an enquiry</Link>
           </div>
         </div>

@@ -21,12 +21,12 @@ export default function Contact() {
           </div>
           <div>
             <div className="card featured">
-              <h3>Prefer to talk?</h3>
+              <h2 className="h3-style">Prefer to talk?</h2>
               <p>Grab a 20 minute slot. No slides, no hard sell, just a straight look at where the time is going.</p>
-              <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+              <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
             </div>
             <div className="card" style={{ marginTop: 24 }}>
-              <h3>Direct</h3>
+              <h2 className="h3-style">Direct</h2>
               <p style={{ marginBottom: 8 }}><a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
               <p style={{ marginBottom: 0 }}><a href={PHONE_HREF}>{PHONE}</a></p>
             </div>

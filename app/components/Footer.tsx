@@ -12,7 +12,7 @@ export default function Footer() {
             <p className="muted">Marketing, revenue and systems for established regional businesses. Based in Central Queensland, working Australia wide.</p>
           </div>
           <div>
-            <h4>Services</h4>
+            <h2 className="footer-h">Services</h2>
             <ul>
               {areas.map((a) => (
                 <li key={a.slug}><Link href={`/services/${a.slug}`}>{a.name}</Link></li>
@@ -23,7 +23,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4>Get in touch</h4>
+            <h2 className="footer-h">Get in touch</h2>
             <ul>
               <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
               <li><a href={PHONE_HREF}>{PHONE}</a></li>

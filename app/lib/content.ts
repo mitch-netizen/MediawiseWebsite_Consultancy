@@ -160,6 +160,11 @@ export const offers: Offer[] = [
   },
 ];
 
+// Payment schedule text for a bundle deposit percentage.
+export function paymentSchedule(depositPercent: number) {
+  return depositPercent >= 50 ? "50% deposit, 50% on go live" : `${depositPercent}% deposit, 30% at build complete, 30% on go live`;
+}
+
 export const bundles = [
   { name: "Starter", includes: "01 and 03", price: 2950, carePlan: 295, saving: 450, deposit: 1475, depositPercent: 50, payUrl: "https://book.stripe.com/4gMdRbeHl9Wu1CPccZf7i07" },
   { name: "Growth", includes: "01, 02 and 03", price: 5450, carePlan: 445, saving: 900, deposit: 2180, depositPercent: 40, payUrl: "https://book.stripe.com/4gM5kFar5c4C1CPfpbf7i08" },
@@ -192,6 +197,7 @@ export type Area = {
   slug: string;
   name: string;
   seoTitle: string;
+  seoDescription: string;
   stages: string;
   tone: "gold" | "teal" | "blue";
   headline: string;
@@ -205,7 +211,8 @@ export const areas: Area[] = [
   {
     slug: "marketing",
     name: "Marketing",
-    seoTitle: "Marketing Consultant and Fractional Marketing Lead, Central Queensland",
+    seoTitle: "Marketing Consultant, Central Queensland",
+    seoDescription: "Marketing strategy, campaigns and part time marketing leadership for regional businesses, with every dollar tied to enquiries and revenue.",
     stages: "Get found",
     tone: "gold",
     headline: "Marketing that's judged on the work it brings in.",
@@ -228,7 +235,8 @@ export const areas: Area[] = [
   {
     slug: "revenue-and-sales",
     name: "Revenue and sales",
-    seoTitle: "Sales and Revenue Consultant for Regional Businesses",
+    seoTitle: "Sales and Revenue Consultant, Regional QLD",
+    seoDescription: "Revenue diagnostics, sales process and team coaching for regional businesses, from a leader who has carried a target and led a team of 12.",
     stages: "Win the work",
     tone: "teal",
     headline: "Win more of the work you're already paying to attract.",
@@ -251,7 +259,8 @@ export const areas: Area[] = [
   {
     slug: "systems-and-automation",
     name: "Systems and automation",
-    seoTitle: "Business Automation and Power Automate Consultant, Queensland",
+    seoTitle: "Power Automate Consultant, Queensland",
+    seoDescription: "Fixed price Power Automate builds and custom workflows that take the copy and paste out of your week. Live in 2 to 3 weeks.",
     stages: "Deliver it and get paid",
     tone: "blue",
     headline: "Deliver and bill without the double handling.",
@@ -290,7 +299,7 @@ export const faqs = [
   },
   {
     q: "How much does it cost?",
-    a: "The five automation builds have a fixed scope and a fixed price, from $1,450 to $2,950 plus GST, with optional monthly care plans. All other work, including marketing, sales, diagnostics and part time leadership, is bespoke and quoted to suit the business.",
+    a: "The five automation builds have a fixed scope and a fixed price, from $1,450 to $2,950 plus GST (bundles up to $9,750), with optional monthly care plans. All other work, including marketing, sales, diagnostics and part time leadership, is bespoke and quoted to suit the business.",
   },
   {
     q: "How long does an automation build take?",

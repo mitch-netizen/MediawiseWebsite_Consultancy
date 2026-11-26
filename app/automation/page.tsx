@@ -4,7 +4,7 @@ import Link from "next/link";
 import { offers, aud } from "../lib/content";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = pageMeta("/automation", "Power Automate Automation Builds for Regional Businesses", "Five fixed price Power Automate builds: enquiry capture, same day quotes, faster invoice payment, staff onboarding and weekly numbers. Live in 2 to 3 weeks, from $1,450 plus GST.");
+export const metadata: Metadata = pageMeta("/automation", "Power Automate Builds, Fixed Price", "Five fixed price Power Automate builds: enquiries, same day quotes, faster payment, onboarding and weekly numbers. Live in 2 to 3 weeks, from $1,450 plus GST.");
 
 export default function Automation() {
   return (
@@ -20,7 +20,7 @@ export default function Automation() {
         <div className="container grid grid-2">
           {offers.map((o) => (
             <Link key={o.slug} href={`/automation/${o.slug}`} className="card">
-              <h3>{o.name}</h3>
+              <h2 className="h3-style">{o.name}</h2>
               <p>{o.problem}</p>
               <p className="muted">{o.fixes}</p>
               <div className="price-tag">{aud(o.price)} <span className="small muted">+ GST · live in {o.weeks} weeks</span></div>

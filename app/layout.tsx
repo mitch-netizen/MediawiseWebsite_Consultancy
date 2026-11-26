@@ -13,13 +13,13 @@ const serif = localFont({ src: "./fonts/Fraunces-Italic.ttf", variable: "--font-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Marketing, Sales and Automation Consultant, Central Queensland | Mediawise Solutions",
+    default: "Marketing, Sales and Automation Consultant | Mediawise Solutions",
     template: "%s | Mediawise Solutions",
   },
   description:
-    "Mitch Harris helps established regional businesses turning over $1M to $20M tighten the chain from first enquiry to cash in the bank: marketing, sales, and Power Automate systems. Based in Central Queensland, working Australia wide.",
+    "Mitch Harris helps regional businesses turning over $1M to $20M tighten the chain from first enquiry to cash: marketing, sales and Power Automate systems.",
   applicationName: "Mediawise Solutions",
-  authors: [{ name: "Mitch Harris", url: `${SITE_URL}/about` }],
+  authors: [{ name: "Mitch Harris", url: `${SITE_URL}/about/` }],
   creator: "Mitch Harris",
   alternates: { canonical: SITE_URL },
   openGraph: {
@@ -86,7 +86,7 @@ const structuredData = {
           "@type": "Offer",
           name: o.name,
           description: o.fixes,
-          url: `${SITE_URL}/automation/${o.slug}`,
+          url: `${SITE_URL}/automation/${o.slug}/`,
           priceSpecification: { "@type": "PriceSpecification", price: o.price, priceCurrency: "AUD", valueAddedTaxIncluded: false },
         })),
       },
@@ -97,7 +97,7 @@ const structuredData = {
       name: "Mitch Harris",
       jobTitle: "Founder, Mediawise Solutions",
       worksFor: { "@id": ORG_ID },
-      url: `${SITE_URL}/about`,
+      url: `${SITE_URL}/about/`,
       hasCredential: ["Microsoft Power Automate", "Smartsheet", "Advanced Salesforce CRM reporting"].map((c) => ({ "@type": "EducationalOccupationalCredential", name: c })),
       description:
         "A decade in commercial leadership. Former General Sales Manager at Southern Cross Austereo across Rockhampton, Gladstone and Emerald, where he led a team of 12 and a portfolio of around $7M and took the region to the number one national regional revenue ranking.",
@@ -118,8 +118,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-AU" className={`${display.variable} ${body.variable} ${serif.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        <a className="skip-link" href="#main">Skip to content</a>
         <Header />
-        <main>{children}</main>
+        <main id="main">{children}</main>
         <Footer />
       </body>
     </html>

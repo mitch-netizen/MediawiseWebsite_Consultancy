@@ -14,7 +14,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const a = areas.find((x) => x.slug === slug);
-  return a ? pageMeta(`/services/${a.slug}`, a.seoTitle, a.intro) : {};
+  return a ? pageMeta(`/services/${a.slug}`, a.seoTitle, a.seoDescription) : {};
 }
 
 export default async function AreaPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,7 +24,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
   const others = areas.filter((x) => x.slug !== a.slug);
   const isSystems = a.slug === "systems-and-automation";
 
-  const url = `${SITE_URL}/services/${a.slug}`;
+  const url = `${SITE_URL}/services/${a.slug}/`;
   const ld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -47,8 +47,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-          { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/#services` },
-          { "@type": "ListItem", position: 3, name: a.name, item: url },
+          { "@type": "ListItem", position: 2, name: a.name, item: url },
         ],
       },
     ],
@@ -64,7 +63,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
             <h1>{a.headline}</h1>
             <p className="lead">{a.intro}</p>
             <div className="btn-row">
-              <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+              <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
             </div>
           </div>
           <div className="area-art"><Emblem tone={a.tone} /></div>

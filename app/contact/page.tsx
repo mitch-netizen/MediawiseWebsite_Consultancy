@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pageMeta } from "../lib/seo";
-import { BOOKING_URL, EMAIL, PHONE, PHONE_HREF, ENQUIRY_FORM_URL } from "../lib/content";
+import { BOOKING_URL, EMAIL, PHONE, PHONE_HREF } from "../lib/content";
+import EnquiryForm from "../components/EnquiryForm";
 
 export const metadata: Metadata = pageMeta("/contact", "Contact Mitch Harris", "Book a 20 minute chat or send an enquiry to Mediawise Solutions. In person around Gladstone and Rockhampton, online Australia wide. Phone 0409 265 711.");
 
@@ -17,7 +18,7 @@ export default function Contact() {
       <section className="section">
         <div className="container split">
           <div>
-            <iframe className="form-embed" src={ENQUIRY_FORM_URL} title="Mediawise Solutions enquiry form" loading="lazy" />
+            <EnquiryForm />
           </div>
           <div>
             <div className="card featured">

@@ -12,11 +12,17 @@
 # F5 (Won) is NOT generated. See ops/specs/F5_Won.md.
 # =====================================================================================================
 
+XERO_API = "https://api.xero.com/api.xro/2.0"
 QUOTE_STATUS = "DRAFT"   # DRAFT: Mitch checks the quote in Xero first. Use "SENT" only once happy with it.
 
 
 def xr(method, uri, body, after):
     """One Xero API call via Magnetism. The reply text is at body('<action>')?['body'] (a JSON string)."""
+    # Magnetism only accepts the full Accounting API address, so every path is prefixed here.
+    if uri.startswith("@"):
+        uri = "@concat('" + XERO_API + "'," + uri[1:] + ")"
+    else:
+        uri = XERO_API + uri
     p = {"xero-tenant-id": XERO_TENANT_ID, "method": method, "uri": uri, "name": "Accept", "value": "application/json"}
     if body is not None:
         p["body"] = body

@@ -32,7 +32,7 @@ export default function Pricing() {
                     <td>{aud(o.price)}</td>
                     <td>{aud(o.carePlan)} a month</td>
                     <td>{o.weeks} weeks</td>
-                    <td><a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer" style={{ fontSize: 14, padding: "8px 16px", minHeight: 40, whiteSpace: "nowrap" }}>Pay {aud(offerPayments[o.slug].deposit)} deposit</a></td>
+                    <td><a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer" style={{ fontSize: 14, padding: "8px 16px", minHeight: 40, whiteSpace: "nowrap" }}>Pay {aud(offerPayments[o.slug].deposit)} + GST deposit</a></td>
                   </tr>
                 ))}
               </tbody>
@@ -47,7 +47,7 @@ export default function Pricing() {
                 <h3>{b.name}</h3>
                 <div className="price-tag" style={{ marginTop: 0 }}>{aud(b.price)}</div>
                 <p className="muted" style={{ marginTop: 12 }}>Save {aud(b.saving)} on setup. Care plan {aud(b.carePlan)} a month.</p>
-                <a className="btn btn-primary" href={b.payUrl} rel="noopener noreferrer" style={{ marginTop: 20 }}>Pay {aud(b.deposit)} deposit</a>
+                <a className="btn btn-primary" href={b.payUrl} rel="noopener noreferrer" style={{ marginTop: 20 }}>Pay {aud(b.deposit)} + GST deposit</a>
                 <p className="muted small" style={{ marginTop: 8 }}>{b.depositPercent}% deposit, plus GST, books your start date.</p>
               </div>
             ))}

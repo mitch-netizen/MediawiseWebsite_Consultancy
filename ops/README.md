@@ -31,7 +31,7 @@ No secrets live in these files. The F6 webhook link is never stored here.
 | `SMS_PROVIDER` | `None` (off), `"twilio"` or `"clicksend"`. While `None`, F1 and F2 contain no SMS step and need no SMS connection. |
 | `SMS_FROM` | Twilio only: the sending number in +61 format. |
 | `XERO_TENANT_ID`, `XERO_ACCOUNT_CODE` | Xero flows only. Tenant ID appears once the connector is connected. |
-| `DEPOSIT_PCT` | F8 final invoice is the proposal value times one minus this. 0.5 for single offers and Starter, 0.4 for Growth and Full system. |
+| `GO_LIVE_PCT`, `GO_LIVE_PCT_BIG`, `BIG_DEAL_OVER` | F8 go live invoice is the proposal value times 0.5 for setups up to $5,000, and times 0.3 above that (bundles pay 40% deposit, 30% at build complete, 30% at go live). The build complete invoice for big deals is raised by hand. |
 | `HOWTO_URL` | F8 how to guide link. Empty leaves it out. |
 
 ## Deploy a changed flow (Update, not New)

@@ -22,9 +22,11 @@ SMS_PROVIDER = None
 SMS_FROM = ""   # Twilio only: your Twilio number in E.164 (for example +61...). ClickSend does not need it.
 
 # Xero (only used by --xero). Tenant ID is shown in the Magnetism connector once connected.
-XERO_TENANT_ID = ""
-XERO_ACCOUNT_CODE = ""      # Xero sales account code for quote and invoice lines. Blank leaves Xero's default.
-DEPOSIT_PCT = 0.5           # F8 final invoice = proposal value x (1 - DEPOSIT_PCT). 0.5 Starter bundle and single offers, 0.4 Growth and Full system.
+XERO_TENANT_ID = "df0ff73d-d175-4c60-bc49-4097e1191771"   # Mediawise Solutions (not a secret)
+XERO_ACCOUNT_CODE = "200"   # Sales (GST on income). Xero sales account code for quote and invoice lines. Blank leaves Xero's default.
+GO_LIVE_PCT = 0.5           # F8 go live invoice = proposal value x GO_LIVE_PCT for setups up to BIG_DEAL_OVER.
+GO_LIVE_PCT_BIG = 0.3       # ...and for setups over BIG_DEAL_OVER (bundles: 40% deposit, 30% at build complete, 30% at go live).
+BIG_DEAL_OVER = 5000        # The build complete invoice for big deals is raised by hand.
 HOWTO_URL = ""              # F8: link to the client how to guide. Blank leaves the link out.
 # ===========================================================================================
 

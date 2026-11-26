@@ -156,7 +156,8 @@ f8 = column_map_actions({})
 f8["Set_up_contact_id"] = ID_VAR
 f8["Go_lives_to_process"] = {"type": "Query", "runAfter": {"Set_up_contact_id": ["Succeeded"]}, "inputs": {"from": "@body('Get_pipeline_items')?['value']",
     "where": f"@and({NOTES_OK},equals({C('item()', 'Stage')},'Live'),not(empty({C('item()', 'Proposal value ex GST')})),not({notes_has('item()', '[Go live processed')}))"}}
-final_amt = f"float(formatNumber(mul(float({C(G8, 'Proposal value ex GST')}),{1 - DEPOSIT_PCT}),'0.00','en-US'))"
+_pv = f"float({C(G8, 'Proposal value ex GST')})"
+final_amt = f"float(formatNumber(mul({_pv},if(greater({_pv},{BIG_DEAL_OVER}),{GO_LIVE_PCT_BIG},{GO_LIVE_PCT})),'0.00','en-US'))"
 inv_body = {"Invoices": [{"Type": "ACCREC", "Contact": {"ContactID": "@variables('ContactId')"}, "Date": f"@{today_local}",
     "DueDate": f"@formatDateTime(addDays(convertFromUtc(utcNow(),'{TZ}'),14),'yyyy-MM-dd')", "LineAmountTypes": "Exclusive",
     "Reference": f"@concat('Final - ',{G8}?['Title'])", "Status": "AUTHORISED",

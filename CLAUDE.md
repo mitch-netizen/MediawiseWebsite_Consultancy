@@ -58,13 +58,13 @@ Monthly subscriptions, `tax_behavior: exclusive`, GST added at checkout, busines
 - Final payment (50% at go live) is a Xero invoice from F8, with F7 ticking it paid. Deposits stay on Stripe.
 - Referral partners (accountants and bookkeepers): 10% of the setup price on a sold build. Draft terms before using.
 - SMS: Mitch is setting up the connector this week. Site wording keeps "email and SMS" until then.
-- Still needed from Mitch: LinkedIn and Google Business Profile URLs (for site footer and structured data).
+- LinkedIn and Google profile links are in the footer and the organisation `sameAs` (26 Nov). A plain Google review link is still needed for F9.
 
 ### Website to do
 
 - [x] Deposit buttons now read "Pay $975 + GST deposit" (live 26 Nov).
 - [ ] Stripe business profile still lists mediawisesolutions.com.au. Suggest changing it to .au; Mitch does this in Stripe himself.
-- [ ] Jotform enquiry form: the source and utm fields appear visible. They should be hidden.
+- [x] Jotform enquiry form: source, utm_campaign and utm_content are hidden (checked 26 Nov).
 - [ ] Content marketing strategy doc (12 articles): https://claude.ai/artifact/7juvdwr9GSmBiGj5Djr4cR
 
 ## 2. Business automation (Power Automate)

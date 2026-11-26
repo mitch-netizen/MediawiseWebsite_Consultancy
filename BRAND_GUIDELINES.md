@@ -262,7 +262,7 @@ What works in real revenue functions, not what looks good in frameworks.
 ## Contact & Connection
 
 **Primary Contact:** Mitch Harris  
-**Email:** mitch.harris@outlook.com.au  
+**Email:** mitch@mediawisesolutions.au  
 **Phone:** +61 409 265 711  
 **Location:** Central Queensland, Australia  
 **LinkedIn:** linkedin.com/in/mitch-harris-consultant  

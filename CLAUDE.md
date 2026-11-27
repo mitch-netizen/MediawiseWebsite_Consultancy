@@ -3,7 +3,7 @@
 Owner: Mitch Harris, sole trader, ABN 27 565 980 600. Business email mitch@mediawisesolutions.au (mitch.harris@outlook.com.au bounces, don't use it).
 Mitch is on a Mac. He prefers Australian English, no corporate jargon, and no dashes in emails or messages written for him. Never enter passwords; he signs in himself.
 
-Last updated 27 Nov 2026.
+Last updated 28 Nov 2026.
 
 ## 1. Website (this repo)
 
@@ -74,7 +74,7 @@ The full plan is the "Mediawise Operating System: Automation Blueprint" doc: htt
 ### Environment
 
 - Power Automate environment `Default-dbaeb5b4-5314-4b81-a5da-a5412217d466`. Mitch has Premium.
-- Magnetism Xero connector is connected (27 Nov). Xero organisation and tenant ID: `df0ff73d-d175-4c60-bc49-4097e1191771` (Mediawise Solutions, AUD). Sales account code 200. Magnetism only accepts full addresses starting `https://api.xero.com/api.xro/2.0`.
+- Magnetism Xero connector is connected (27 Nov). Xero organisation and tenant ID: `df0ff73d-d175-4c60-bc49-4097e1191771` (Mediawise Solutions, AUD). Sales account code 200. Magnetism only accepts full addresses starting `https://api.xero.com/api.xro/2.0`. Its "Send an HTTP request to Xero" action (`send-http-request`) takes `xero-tenant-id`, `body/method`, `body/uri`, `body/headers` (list of name and value pairs) and `body/body` (text). Confirmed 28 Nov from a working action; the old guess (`method`, `uri`) was rejected on import.
 - Not set up yet:
   - SMS connector (Mitch is setting it up).
 - Pipeline list: "Mediawise Pipeline", a Microsoft List in Mitch's OneDrive site https://mediawisesolutions667-my.sharepoint.com/personal/mitch_mediawisesolutions_au
@@ -112,7 +112,7 @@ Column titles have NO brackets ("Proposal value ex GST", not "(ex GST)").
 
 `ops/flows/build.py` generates the legacy import zips for every flow (`python3 build.py`, output in `ops/flows/dist/`, ignored by git). `python3 validate.py` checks them. `build.py --xero` builds F4, F7 and F8 once `XERO_TENANT_ID` is set. Full steps and test checklists are in `ops/README.md`. F5 is a spec only: `ops/specs/F5_Won.md`. SMS steps in F1 and F2 stay off until `SMS_PROVIDER` is set. Review link: set `REVIEW` in the config block.
 
-Updated 26 Nov: the six live flows were hardened (see ops/README.md) and need redeploying with Update, then turning back on.
+28 Nov: the six hardened flows were imported with Update and switched back on. F4, F7 and F8 were imported as new flows; F7 is on, F4 and F8 are off until tested with a dummy row.
 
 How the flows are written:
 - Every flow looks up columns by display title at run time (column map), so internal names aren't hard coded.
@@ -121,7 +121,7 @@ How the flows are written:
 - Never use `createArray()` with no arguments. Use `json('[]')`.
 
 Deploying an updated flow:
-1. Go to make.powerapps.com, then flows/import (Import Package Legacy).
+1. Go to make.powerapps.com, then flows/import (Import Package Legacy). Open it on make.powerapps.com directly: on make.powerautomate.com the import page sits in a frame the browser tools can't reach. The browser upload only takes files Mitch has attached in chat, so send him the zips and ask him to drag them back in.
 2. Set the flow resource to "Update" and pick the existing flow.
 3. Pick the existing SharePoint (MWS), Teams and Outlook connections.
 4. **Import switches the flow OFF.** Turn it back on afterwards.
@@ -134,7 +134,7 @@ Deploying an updated flow:
 | F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working in testing. **Jotform webhook not yet added** (see below). |
 | F9 Results report | 41de8c8a-d3fe-459c-a097-50c718f72e58 | Working. Runs daily at 8:20am. Draft on day 30, then a client email with the report attached once "30 day result" is filled. |
 | F10 Monday numbers | 57c08d34-dc32-42e2-9800-d6eb26a95163 | Working. Column names fixed on 25 Nov. |
-| F4 Proposal sent, F7 Payment received, F8 Go live | not created yet | Built and validated 27 Nov in `ops/flows/dist/xero/` (`python3 build.py --xero`). NOT imported yet: import with Create as new, test with a dummy row before turning F4 and F8 on. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
+| F4 Proposal sent, F7 Payment received, F8 Go live | see My flows | Imported 28 Nov (Create as new). F7 ON. F4 and F8 OFF until tested: set a TEST row to Proposal sent with a Proposal value, check a DRAFT quote lands in Xero, then delete it. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
 | F5 Won | | Spec only, `ops/specs/F5_Won.md`, needs Mitch's answers. |
 
 ### Automation to do
@@ -149,6 +149,7 @@ Deploying an updated flow:
   - Test calendar events on 25 Nov.
   - Test emails ("Before our chat", "One thing before we kick off", "Your 30 day results", "Monday numbers").
   - Test Jotform submissions.
-- [ ] **Import F4, F7, F8** (Create as new) and the six hardened flows F1, F2, F3, F6, F9, F10 (Update), then turn each on. Needs a browser signed in to make.powerapps.com; Mitch signs in himself.
+- [x] **Imports done 28 Nov.** Six hardened flows updated and on. F4, F7, F8 created; F7 on, F4 and F8 off pending the dummy row test.
+- [ ] **Test F4 and F8** with one TEST pipeline row, then turn them on. First Xero runs also confirm the reply shape (see ops/README.md).
 - [ ] **F5** needs Mitch's answers (see the spec).
 - [ ] **SMS steps in F1 and F2** need a ClickSend or Twilio connector.

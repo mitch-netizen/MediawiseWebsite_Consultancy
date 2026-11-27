@@ -115,4 +115,4 @@ Use a test business name that starts with TEST so the rows are easy to tidy afte
 
 ## Xero flows: first import checks
 
-F4, F7 and F8 have never run. On the first import confirm: the connector shows as "Xero Accounting - Magnetism" and the import picks its connection; a draft quote lands in Xero; the reply text is read correctly (if the contact id comes back blank, the response path in `xj()` in `xero_flows.py` needs a tweak). If the import complains about the connector id, open any Magnetism action in a test flow, export it, and send the id to Claude.
+Imported 28 Nov. The connector id `shared_xeroaccountingmagnet` was accepted. The first import failed because the parameter names were guessed; they are now `body/method`, `body/uri`, `body/headers`, `body/body`, read from a working action's code view. Still to confirm on the first real run: a draft quote lands in Xero and the contact id comes back. `xj()` reads the reply whether Xero's JSON comes back directly or inside a `body` field; if the contact id is still blank, check the raw output of `Q_find_contact` (F4) or `G_find_contact` (F8) in the run history.

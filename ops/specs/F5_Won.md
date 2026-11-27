@@ -14,6 +14,8 @@ Trigger: an Outlook email, the Jotform Sign "document completed" message.
 
 ## Decisions needed from Mitch before it can be built
 
+28 Nov: decision 1 is settled as option A (deposits stay on Stripe, per CLAUDE.md). Decision 5 is settled: the list has an "Offer interest" column (field_8). No Jotform Sign completion email exists in the inbox yet for decision 2.
+
 1. **Deposits now go through Stripe, not Xero.** The blueprint (22 Nov) assumed a Xero deposit invoice. Since 25 Nov the website sends deposits to Stripe links (8 live prices). So step 3 and F7 need one of:
    - A. Keep Stripe for deposits. F5 then skips the Xero deposit invoice and only creates the Xero contact. F7 ticks Deposit paid from Stripe instead of Xero (needs a Stripe trigger, or Mitch ticks it by hand, or a daily check of Stripe payments).
    - B. Go back to Xero deposit invoices and stop using the Stripe links on the site.

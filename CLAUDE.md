@@ -10,7 +10,8 @@ Last updated 28 Nov 2026.
 - Next.js 16 static export (`output: "export"`, `trailingSlash`). Build with `npm run build`.
 - Hosted on Cloudflare Pages, domain mediawisesolutions.au (DNS on Cloudflare).
 - Branches:
-  - `website-rebuild` is PRODUCTION. Pushing to it deploys the live site.
+  - `website-rebuild` is PRODUCTION and the GitHub default branch (28 Nov). Pushing to it deploys the live site. Confirmed in Cloudflare Pages (project mediawisewebsite-consultancy, account Mitch@mediawisesolutions.com.au): production branch website-rebuild, domains mediawisesolutions.au and www.
+  - `archive/main-2026-05` is the old `main`, renamed 28 Nov (nothing in it that isn't in website-rebuild). Vercel's Git link was removed 28 Nov.
   - `redesign` is the working branch (preview at redesign.mediawisewebsite-consultancy.pages.dev).
   - Workflow: commit on `redesign`, build, then fast forward and push `website-rebuild`. A change merged into `redesign` is NOT live until `website-rebuild` is pushed. That's what happened with the Stripe links: they sat on `redesign` until 25 Nov.
 - Content lives in `app/lib/content.ts`: areas, offers, bundles, faqs and Stripe deposit links.
@@ -96,10 +97,15 @@ The full plan is the "Mediawise Operating System: Automation Blueprint" doc: htt
 | Source | field_5 | |
 | Campaign | field_6 | |
 | Biggest time drain | field_7 | |
+| Offer interest | field_8 | Choice |
 | Stage | field_9 | Choice: New lead, Contacted, Discovery booked, Proposal sent, Won, Onboarding, Build, Live, Care plan, Lost, Nurture |
 | Next action date | field_10 | |
-| Proposal value ex GST | | Currency |
+| Proposal value ex GST | field_12 | Currency |
 | Care plan per month ex GST | field_13 | Currency |
+| Agreement status | field_14 | Choice |
+| Xero contact ID | field_15 | Text |
+| Deposit paid | field_16 | Choice (fill in). Flows write "Yes", not true |
+| Final paid | field_17 | Choice (fill in). Flows write "Yes", not true |
 | Kickoff date | field_18 | |
 | Go live date | field_19 | |
 | Baseline | field_20 | Note |
@@ -107,7 +113,7 @@ The full plan is the "Mediawise Operating System: Automation Blueprint" doc: htt
 | Client folder | field_22 | Text URL |
 | Notes | field_24 | |
 
-Column titles have NO brackets ("Proposal value ex GST", not "(ex GST)").
+Column titles have NO brackets ("Proposal value ex GST", not "(ex GST)"). Every Choice column allows fill in values and has no fixed choices. Currency values arrive as numbers: never wrap them in `empty()` (Power Automate refuses it); use `greater(float(coalesce(x,0)),0)`.
 
 ### Flows
 
@@ -135,15 +141,15 @@ Deploying an updated flow:
 | F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working. Jotform webhook added 28 Nov and tested end to end (TEST Webhook Check: folder, answers file, access email all correct). |
 | F9 Results report | 41de8c8a-d3fe-459c-a097-50c718f72e58 | Working. Runs daily at 8:20am. Draft on day 30, then a client email with the report attached once "30 day result" is filled. |
 | F10 Monday numbers | 57c08d34-dc32-42e2-9800-d6eb26a95163 | Working. Column names fixed on 25 Nov. |
-| F4 Proposal sent, F7 Payment received, F8 Go live | see My flows | Imported 28 Nov (Create as new). F7 ON. F4 and F8 OFF until tested: set a TEST row to Proposal sent with a Proposal value, check a DRAFT quote lands in Xero, then delete it. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
+| F4 Proposal sent, F7 Payment received, F8 Go live | F4 0de1d48b-b332-4dd3-8cc5-13fd9230fe07, F7 265c0cb1-d140-4c9f-bdb5-9240735615fa, F8 f7f08b96-c0cf-41fe-8b36-2ee126c2bf29 | Imported 28 Nov. First F4 test run failed: `empty()` on the Currency column. Fixed in code with F7's Yes fix (commit after 5b6bb14); the rebuilt zips still need importing with Update. F7 ON (old version). F4 and F8 OFF. Test row "TEST Xero Check" (pipeline id 4, Proposal sent, $100, Mitch's email) is waiting for the F4 retest. F8 creates an AUTHORISED invoice and emails it, so its live test needs Mitch's OK. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
 | F5 Won | | Spec only, `ops/specs/F5_Won.md`, needs Mitch's answers. |
 
 ### Automation to do
 
 - [x] **F6 webhook** added by Mitch 28 Nov and tested. The URL lives only in Jotform and F6's trigger; never commit it.
-- [ ] **Google review link.** Set `REVIEW` in `ops/flows/build.py`, rebuild F9 and redeploy with Update.
+- [ ] **Google review link.** Blocked: the Google Business Profile (managed by the mitch@mediawisesolutions.com.au Google account) shows "Verification required". Once verified, get the review link from the profile, set `REVIEW` in `ops/flows/build.py`, rebuild F9 and redeploy with Update.
 - [ ] **Uploads.** If Jotform requires login to view uploads, F6 lists the upload links in Teams instead of saving them.
-- [x] **Test data cleanup** (26 Nov, Mitch approved): deleted the two TEST OneDrive folders (recycle bin), 3 test calendar events and 8 test email copies (Deleted Items). **Still to do by hand:** pipeline rows 1 to 3 and the test Jotform submissions (no connector access from here).
+- [x] **Test data cleanup** (26 Nov, Mitch approved): deleted the two TEST OneDrive folders (recycle bin), 3 test calendar events and 8 test email copies (Deleted Items). 28 Nov: pipeline rows 1 to 3 (recycle bin), all 12 test Jotform submissions (Jotform trash), `Clients/TEST Webhook Check` (recycle bin) and tonight's test email (Deleted Items) also cleared. SharePoint REST from the browser tab works for list and folder changes; Jotform inbox for submissions.
 - Original list:
   - Pipeline row 3 "TEST Flow Check" (now Live, care plan $295) and junk rows 1 and 2.
   - OneDrive folders `Clients/TEST Onboarding Check` and `Clients/TEST Flow Check`.
@@ -152,6 +158,8 @@ Deploying an updated flow:
   - Test Jotform submissions.
   - 28 Nov webhook test: OneDrive folder `Clients/TEST Webhook Check`, the "One thing before we kick off" email to Mitch, and its Jotform submission.
 - [x] **Imports done 28 Nov.** Six hardened flows updated and on. F4, F7, F8 created; F7 on, F4 and F8 off pending the dummy row test.
-- [ ] **Test F4 and F8** with one TEST pipeline row, then turn them on. First Xero runs also confirm the reply shape (see ops/README.md).
-- [ ] **F5** needs Mitch's answers (see the spec).
+- [ ] **Import the fixed F4, F7, F8 with Update**, then rerun F4 against the TEST Xero Check row, check the DRAFT quote and contact in Xero, delete both, delete the row, turn F4 on. F8 live test only with Mitch's OK.
+- [x] **Campaign page** /get-paid-faster-chat/ live on production with noindex; UTM tags reach the Jotform hidden fields (q9, q10, q11). Checked 28 Nov.
+- [ ] **Referral terms** drafted 28 Nov: https://claude.ai/artifact/Kf5iqQ1N9a7dusvfjAA58c (4 open questions for Mitch at the end).
+- [ ] **F5**: decisions 1 (Stripe deposits) and 5 (Offer interest column exists) are settled. Still open: a real Jotform Sign completion email (none in the inbox yet), client folder template (default: none, F6 keeps making folders), Planner or task list in Teams (default: Teams).
 - [ ] **SMS steps in F1 and F2** need a ClickSend or Twilio connector.

@@ -74,7 +74,7 @@ P = "items('For_each_quote_to_make')"
 f4 = column_map_actions({})
 f4["Set_up_contact_id"] = ID_VAR
 f4["Quotes_to_make"] = {"type": "Query", "runAfter": {"Set_up_contact_id": ["Succeeded"]}, "inputs": {"from": "@body('Get_pipeline_items')?['value']",
-    "where": f"@and({NOTES_OK},equals({C('item()', 'Stage')},'Proposal sent'),not(empty({C('item()', 'Proposal value ex GST')})),not({notes_has('item()', '[Xero quote created')}))"}}
+    "where": f"@and({NOTES_OK},equals({C('item()', 'Stage')},'Proposal sent'),greater(float(coalesce({C('item()', 'Proposal value ex GST')},0)),0),not({notes_has('item()', '[Xero quote created')}))"}}
 quote_body = {"Quotes": [{
     "Contact": {"ContactID": "@variables('ContactId')"}, "Date": f"@{today_local}",
     "ExpiryDate": f"@formatDateTime(addDays(convertFromUtc(utcNow(),'{TZ}'),14),'yyyy-MM-dd')",
@@ -129,11 +129,12 @@ V7 = "items('For_each_paid_invoice')"
 ROW = "first(body('Row_for_invoice'))"
 f7 = column_map_actions({})
 f7["Get_paid_invoices"] = xr("GET", "/Invoices?where=Status%3D%3D%22PAID%22%20AND%20Type%3D%3D%22ACCREC%22&order=UpdatedDateUTC%20DESC", None, {"Get_pipeline_items": ["Succeeded"]})
-dep_set = f"json(concat('{{\"',{M}?['Deposit paid'],'\":true}}'))"
-fin_set = f"json(concat('{{\"',{M}?['Final paid'],'\":true}}'))"
+# Deposit paid and Final paid are Choice columns (fill in allowed), not Yes/No, so write and check the text "Yes".
+dep_set = f"json(concat('{{\"',{M}?['Deposit paid'],'\":\"Yes\"}}'))"
+fin_set = f"json(concat('{{\"',{M}?['Final paid'],'\":\"Yes\"}}'))"
 stage_acts, stage_last, stage_body = safe_fields("Build", [("Stage", "'Build'")], {"Tick_deposit_paid": ["Succeeded"]})
 stage_acts["Stage_save"] = sp_update(f"{ROW}?['ID']", stage_body, {stage_last: ["Succeeded"]})
-already = lambda colname: {"not": {"equals": [f"@{ROW}?[coalesce({M}?['{colname}'],'__none__')]", True]}}
+already = lambda colname: {"not": {"equals": [f"@toLower(string(coalesce({ROW}?[coalesce({M}?['{colname}'],'__none__')],'')))", "yes"]}}
 f7["For_each_paid_invoice"] = {"type": "Foreach", "foreach": f"@coalesce({xj('Get_paid_invoices')}?['Invoices'],json('[]'))", "runAfter": {"Get_paid_invoices": ["Succeeded"]},
     "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
     "Row_for_invoice": {"type": "Query", "runAfter": {}, "inputs": {"from": "@body('Get_pipeline_items')?['value']",
@@ -160,7 +161,7 @@ G8 = "items('For_each_go_live')"
 f8 = column_map_actions({})
 f8["Set_up_contact_id"] = ID_VAR
 f8["Go_lives_to_process"] = {"type": "Query", "runAfter": {"Set_up_contact_id": ["Succeeded"]}, "inputs": {"from": "@body('Get_pipeline_items')?['value']",
-    "where": f"@and({NOTES_OK},equals({C('item()', 'Stage')},'Live'),not(empty({C('item()', 'Proposal value ex GST')})),not({notes_has('item()', '[Go live processed')}))"}}
+    "where": f"@and({NOTES_OK},equals({C('item()', 'Stage')},'Live'),greater(float(coalesce({C('item()', 'Proposal value ex GST')},0)),0),not({notes_has('item()', '[Go live processed')}))"}}
 _pv = f"float({C(G8, 'Proposal value ex GST')})"
 final_amt = f"float(formatNumber(mul({_pv},if(greater({_pv},{BIG_DEAL_OVER}),{GO_LIVE_PCT_BIG},{GO_LIVE_PCT})),'0.00','en-US'))"
 inv_body = {"Invoices": [{"Type": "ACCREC", "Contact": {"ContactID": "@variables('ContactId')"}, "Date": f"@{today_local}",

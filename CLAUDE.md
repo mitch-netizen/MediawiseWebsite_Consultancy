@@ -63,7 +63,8 @@ Monthly subscriptions, `tax_behavior: exclusive`, GST added at checkout, busines
 ### Website to do
 
 - [x] Deposit buttons now read "Pay $975 + GST deposit" (live 26 Nov).
-- [ ] Stripe business profile still lists mediawisesolutions.com.au. Suggest changing it to .au; Mitch does this in Stripe himself.
+- [x] Stripe business website changed to https://mediawisesolutions.au (28 Nov; public details follow it). Still on .com.au in Stripe: the account display name and the account representative email (mitch@mediawisesolutions.com.au). Mitch to decide. Public details have no support email, privacy policy or terms URL; the site has no privacy or terms page yet.
+- [x] Checkouts checked 28 Nov: offer 03 deposit $725 + $72.50 GST = $797.50; offer 03 care plan $145 + $14.50 = $159.50 a month, 3 month minimum shown. Deposit links also offer Afterpay, Zip and Klarna (Mitch's call whether to keep).
 - [x] Jotform enquiry form: source, utm_campaign and utm_content are hidden (checked 26 Nov).
 - [ ] Content marketing strategy doc (12 articles): https://claude.ai/artifact/7juvdwr9GSmBiGj5Djr4cR
 

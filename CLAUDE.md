@@ -3,7 +3,7 @@
 Owner: Mitch Harris, sole trader, ABN 27 565 980 600. Business email mitch@mediawisesolutions.au (mitch.harris@outlook.com.au bounces, don't use it).
 Mitch is on a Mac. He prefers Australian English, no corporate jargon, and no dashes in emails or messages written for him. Never enter passwords; he signs in himself.
 
-Last updated 26 Nov 2026.
+Last updated 27 Nov 2026.
 
 ## 1. Website (this repo)
 
@@ -74,9 +74,9 @@ The full plan is the "Mediawise Operating System: Automation Blueprint" doc: htt
 ### Environment
 
 - Power Automate environment `Default-dbaeb5b4-5314-4b81-a5da-a5412217d466`. Mitch has Premium.
+- Magnetism Xero connector is connected (27 Nov). Xero organisation and tenant ID: `df0ff73d-d175-4c60-bc49-4097e1191771` (Mediawise Solutions, AUD). Sales account code 200. Magnetism only accepts full addresses starting `https://api.xero.com/api.xro/2.0`.
 - Not set up yet:
-  - Magnetism Xero connector.
-  - SMS connector.
+  - SMS connector (Mitch is setting it up).
 - Pipeline list: "Mediawise Pipeline", a Microsoft List in Mitch's OneDrive site https://mediawisesolutions667-my.sharepoint.com/personal/mitch_mediawisesolutions_au
 - OneDrive folders:
   - `Documents/Templates` holds the Mediawise Results Report Template.docx.
@@ -134,7 +134,8 @@ Deploying an updated flow:
 | F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working in testing. **Jotform webhook not yet added** (see below). |
 | F9 Results report | 41de8c8a-d3fe-459c-a097-50c718f72e58 | Working. Runs daily at 8:20am. Draft on day 30, then a client email with the report attached once "30 day result" is filled. |
 | F10 Monday numbers | 57c08d34-dc32-42e2-9800-d6eb26a95163 | Working. Column names fixed on 25 Nov. |
-| F4, F5, F7, F8 | | Not built. Blocked on the Xero connector. |
+| F4 Proposal sent, F7 Payment received, F8 Go live | not created yet | Built and validated 27 Nov in `ops/flows/dist/xero/` (`python3 build.py --xero`). NOT imported yet: import with Create as new, test with a dummy row before turning F4 and F8 on. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
+| F5 Won | | Spec only, `ops/specs/F5_Won.md`, needs Mitch's answers. |
 
 ### Automation to do
 
@@ -148,5 +149,6 @@ Deploying an updated flow:
   - Test calendar events on 25 Nov.
   - Test emails ("Before our chat", "One thing before we kick off", "Your 30 day results", "Monday numbers").
   - Test Jotform submissions.
-- [ ] **F4, F5, F7, F8** once the Magnetism Xero connector is connected.
+- [ ] **Import F4, F7, F8** (Create as new) and the six hardened flows F1, F2, F3, F6, F9, F10 (Update), then turn each on. Needs a browser signed in to make.powerapps.com; Mitch signs in himself.
+- [ ] **F5** needs Mitch's answers (see the spec).
 - [ ] **SMS steps in F1 and F2** need a ClickSend or Twilio connector.

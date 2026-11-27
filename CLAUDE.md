@@ -131,7 +131,7 @@ Deploying an updated flow:
 | F1 New lead | 8fa5238a-1ed1-4a90-b9ad-70e4462af89b | Working. Jotform enquiry webhook, creates the row, Teams alert. |
 | F2 Lead nudge | 3f0b96ec-ab0c-49b3-b2cf-bae8af0a8e39 | Runs daily at 8am with no errors. The email path is not yet proven with a real day 1 lead. |
 | F3 Discovery booked | 9601d8ee-255c-4dd9-821c-33cc1ec73061 | Working. Calendar trigger with split-on, prep email, Teams reminder. |
-| F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working in testing. **Jotform webhook not yet added** (see below). |
+| F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working. Jotform webhook added 28 Nov and tested end to end (TEST Webhook Check: folder, answers file, access email all correct). |
 | F9 Results report | 41de8c8a-d3fe-459c-a097-50c718f72e58 | Working. Runs daily at 8:20am. Draft on day 30, then a client email with the report attached once "30 day result" is filled. |
 | F10 Monday numbers | 57c08d34-dc32-42e2-9800-d6eb26a95163 | Working. Column names fixed on 25 Nov. |
 | F4 Proposal sent, F7 Payment received, F8 Go live | see My flows | Imported 28 Nov (Create as new). F7 ON. F4 and F8 OFF until tested: set a TEST row to Proposal sent with a Proposal value, check a DRAFT quote lands in Xero, then delete it. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
@@ -139,7 +139,7 @@ Deploying an updated flow:
 
 ### Automation to do
 
-- [ ] **F6 webhook.** In Jotform, on the "Mediawise Solutions: Client Onboarding" form (263265428227056), go to Settings, then Integrations, then WebHooks, and add F6's HTTP trigger URL. Get the URL from F6's "manual" trigger in Power Automate. It contains a signature: treat it as a secret and never commit it. Mitch has to do this; the browser pane isn't signed in to Jotform and the Jotform connector can't add webhooks.
+- [x] **F6 webhook** added by Mitch 28 Nov and tested. The URL lives only in Jotform and F6's trigger; never commit it.
 - [ ] **Google review link.** Set `REVIEW` in `ops/flows/build.py`, rebuild F9 and redeploy with Update.
 - [ ] **Uploads.** If Jotform requires login to view uploads, F6 lists the upload links in Teams instead of saving them.
 - [x] **Test data cleanup** (26 Nov, Mitch approved): deleted the two TEST OneDrive folders (recycle bin), 3 test calendar events and 8 test email copies (Deleted Items). **Still to do by hand:** pipeline rows 1 to 3 and the test Jotform submissions (no connector access from here).
@@ -149,6 +149,7 @@ Deploying an updated flow:
   - Test calendar events on 25 Nov.
   - Test emails ("Before our chat", "One thing before we kick off", "Your 30 day results", "Monday numbers").
   - Test Jotform submissions.
+  - 28 Nov webhook test: OneDrive folder `Clients/TEST Webhook Check`, the "One thing before we kick off" email to Mitch, and its Jotform submission.
 - [x] **Imports done 28 Nov.** Six hardened flows updated and on. F4, F7, F8 created; F7 on, F4 and F8 off pending the dummy row test.
 - [ ] **Test F4 and F8** with one TEST pipeline row, then turn them on. First Xero runs also confirm the reply shape (see ops/README.md).
 - [ ] **F5** needs Mitch's answers (see the spec).

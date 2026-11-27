@@ -4,10 +4,10 @@
 #
 # STATUS: written but never imported or run, because the connector is not connected yet.
 # Every Xero call uses the connector's "Send an HTTP request to Xero" action (operation id
-# send-http-request, parameters xero-tenant-id, method, uri, name, value, body, from the Microsoft
-# connector reference), against the normal Xero Accounting API. No Xero record type names are guessed.
+# send-http-request, parameters xero-tenant-id, body/method, body/uri, body/headers, body/body (confirmed 28 Nov
+# from a working action), against the normal Xero Accounting API. No Xero record type names are guessed.
 # Two things to confirm on first import (see ops/README.md): the connector id shared_xeroaccountingmagnet,
-# and that the response text comes back at body('<action>')?['body'].
+# and the reply shape (xj() handles the Xero JSON directly or inside a 'body' field).
 #
 # F5 (Won) is NOT generated. See ops/specs/F5_Won.md.
 # =====================================================================================================
@@ -23,15 +23,20 @@ def xr(method, uri, body, after):
         uri = "@concat('" + XERO_API + "'," + uri[1:] + ")"
     else:
         uri = XERO_API + uri
-    p = {"xero-tenant-id": XERO_TENANT_ID, "method": method, "uri": uri, "name": "Accept", "value": "application/json"}
+    # Parameter names confirmed 28 Nov from the code view of a working Magnetism action:
+    # body/method, body/uri, body/headers (list of name/value pairs), body/body (text).
+    headers = [{"name": "Accept", "value": "application/json"}]
+    p = {"xero-tenant-id": XERO_TENANT_ID, "body/method": method, "body/uri": uri, "body/headers": headers}
     if body is not None:
-        p["body"] = body
+        headers.append({"name": "Content-Type", "value": "application/json"})
+        p["body/body"] = body
     return conn(XR, "send-http-request", p, after)
 
 
 def xj(name):
-    """Parsed JSON reply of a Xero action (an empty object when there is no reply)."""
-    return f"json(coalesce(body('{name}')?['body'],'{{}}'))"
+    """Parsed JSON reply of a Xero action (an empty object when there is no reply).
+    Works whether the connector returns the Xero JSON directly or wrapped in a 'body' field (text or object)."""
+    return f"json(string(coalesce(body('{name}')?['body'],body('{name}'),json('{{}}'))))"
 
 
 def xero_contact_actions(prefix, name_expr, email_expr, after):

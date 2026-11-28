@@ -9,6 +9,8 @@
 # Two things to confirm on first import (see ops/README.md): the connector id shared_xeroaccountingmagnet,
 # and the reply shape (xj() handles the Xero JSON directly or inside a 'body' field).
 #
+# F7 and F8 also create and update the matching row in the Mediawise Jobs list (see jobs_sync below).
+#
 # F5 (Won) is NOT generated. See ops/specs/F5_Won.md.
 # =====================================================================================================
 
@@ -121,6 +123,56 @@ f4.update(followup(2, 5, "Still keen to help", f"<p>Hi FIRST,</p><p>Last nudge f
 package("xero/F4_Mediawise_Proposal_sent.zip", "F4 Mediawise Proposal sent", "NEEDS XERO: creates the Xero quote when Stage is Proposal sent, then day 2 and day 5 follow ups",
         {"Recurrence": {"type": "Recurrence", "recurrence": {"frequency": "Minute", "interval": 15, "timeZone": TZ}}}, f4, [SP, TM, OL, XR])
 
+
+# ---------------- Mediawise Jobs sync (used by F7 and F8) ----------------
+# One row per job in the "Mediawise Jobs" list, matched on its Pipeline ID column (the Pipeline row's ID).
+# Same patterns as the rest of the flows: columns are found by display title at run time (its own column map,
+# because the Jobs list has different internal names), safe_fields writes only columns that exist, and a missing
+# column or list never stops the Pipeline update. A problem is reported in Teams instead.
+# Number and Currency columns are written as real numbers or null (never wrapped in empty(), never strings).
+def jobs_sync(p, id_expr, create_pairs, update_pairs, after):
+    """Returns the actions that create or update the Jobs row for one Pipeline row. p is a unique prefix."""
+    if not JOBS_SYNC:
+        return {}
+    JM, JC, JI, MATCH_J = f"outputs('{p}_Jobs_column_map')", f"{p}_Get_jobs_columns", f"{p}_Get_jobs_items", f"{p}_Job_match"
+    has_id = f"@empty({JM}?['Pipeline ID'])"
+    jfields = lambda pre, pairs, aft: safe_fields(pre, pairs, aft, cols=JC, types=JOBS_TYPES)
+    u_acts, u_last, u_body = jfields(p + "U", update_pairs, {})
+    u_acts[p + "U_save"] = sp_update(f"first(body('{MATCH_J}'))?['ID']", u_body, {u_last: ["Succeeded"]}, JOBS_LIST, JOBS_SITE)
+    n_acts, n_last, n_body = jfields(p + "N", create_pairs, {})
+    n_acts[p + "N_create"] = sp_create_item(n_body, {n_last: ["Succeeded"]}, JOBS_LIST, JOBS_SITE)
+    return {
+        JC: sp_get(f"_api/web/lists/getbytitle('{JOBS_LIST}')/fields?$filter=Hidden eq false and ReadOnlyField eq false&$select=Title,InternalName,TypeAsString", after, JOBS_SITE),
+        p + "_Jobs_titles": {"type": "Select", "runAfter": {JC: ["Succeeded"]}, "inputs": {"from": f"@body('{JC}')?['value']", "select": "@concat('\"',item()?['Title'],'\":\"',item()?['InternalName'],'\"')"}},
+        p + "_Jobs_column_map": {"type": "Compose", "runAfter": {p + "_Jobs_titles": ["Succeeded"]}, "inputs": f"@json(concat('{{',join(body('{p}_Jobs_titles'),','),'}}'))"},
+        JI: sp_get(f"_api/web/lists/getbytitle('{JOBS_LIST}')/items?$top=5000", {p + "_Jobs_column_map": ["Succeeded"]}, JOBS_SITE),
+        MATCH_J: {"type": "Query", "runAfter": {JI: ["Succeeded"]}, "inputs": {"from": f"@body('{JI}')?['value']",
+            "where": f"@equals(float(coalesce(item()?[coalesce({JM}?['Pipeline ID'],'__none__')],-1)),float({id_expr}))"}},
+        p + "_If_job_exists": {"type": "If", "runAfter": {MATCH_J: ["Succeeded"]},
+            "expression": {"and": [{"equals": [has_id, False]}, {"greater": [f"@length(body('{MATCH_J}'))", 0]}]},
+            "actions": u_acts,
+            "else": {"actions": {p + "_If_can_create": {"type": "If", "runAfter": {}, "expression": {"equals": [has_id, False]}, "actions": n_acts,
+                "else": {"actions": {p + "_No_pipeline_id_alert": teams(f"<p><b>The {JOBS_LIST} list has no Pipeline ID column, so no Jobs row was created.</b> Add a Number column called Pipeline ID.</p>", {})}}}}}},
+        p + "_Jobs_problem_alert": teams(f"<p><b>The {JOBS_LIST} list was not updated.</b> The Pipeline row is fine. Check that the list exists and add the row by hand.</p>", {p + "_If_job_exists": ["Failed", "Skipped", "TimedOut"]}),
+    }
+
+
+def num_or_null(item, colname):
+    """A Pipeline Currency value as a number when it is above zero, else null. Never uses empty() on Currency."""
+    return f"if(greater(float(coalesce({C(item, colname)},0)),0),float({C(item, colname)}),null)"
+
+
+def jobs_pairs(item, stage, next_action, next_date, extra=()):
+    """(create_pairs, update_pairs). Update leaves Title, Offer and Pipeline ID alone."""
+    common = [("Stage", f"'{stage}'"), ("Setup value ex GST", num_or_null(item, "Proposal value ex GST")),
+              ("Care plan per month ex GST", num_or_null(item, "Care plan per month ex GST")),
+              ("Next action", f"'{next_action}'"), ("Next action date", next_date), *extra]
+    create = [("Title", f"{item}?['Title']"),
+              ("Offer", f"if(empty(string(coalesce({C(item, 'Offer interest')},''))),null,{C(item, 'Offer interest')})"),
+              ("Kickoff date", C(item, "Kickoff date")), ("Client folder", C(item, "Client folder")),
+              ("Pipeline ID", f"{item}?['ID']")] + common
+    return create, common
+
 # ---------------- F7 Payment received ----------------
 # Reads PAID sales invoices from Xero and matches the pipeline row by contact name = Title.
 # The invoice Reference must start with "Deposit" or "Final" (F8 writes "Final - <business>").
@@ -134,6 +186,7 @@ dep_set = f"json(concat('{{\"',{M}?['Deposit paid'],'\":\"Yes\"}}'))"
 fin_set = f"json(concat('{{\"',{M}?['Final paid'],'\":\"Yes\"}}'))"
 stage_acts, stage_last, stage_body = safe_fields("Build", [("Stage", "'Build'")], {"Tick_deposit_paid": ["Succeeded"]})
 stage_acts["Stage_save"] = sp_update(f"{ROW}?['ID']", stage_body, {stage_last: ["Succeeded"]})
+jobs7 = jobs_pairs(ROW, "Build", "Start the build", today_local)
 already = lambda colname: {"not": {"equals": [f"@toLower(string(coalesce({ROW}?[coalesce({M}?['{colname}'],'__none__')],'')))", "yes"]}}
 f7["For_each_paid_invoice"] = {"type": "Foreach", "foreach": f"@coalesce({xj('Get_paid_invoices')}?['Invoices'],json('[]'))", "runAfter": {"Get_paid_invoices": ["Succeeded"]},
     "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
@@ -143,6 +196,7 @@ f7["For_each_paid_invoice"] = {"type": "Foreach", "foreach": f"@coalesce({xj('Ge
         "expression": {"and": [{"greater": ["@length(body('Row_for_invoice'))", 0]}, {"equals": [f"@startsWith(toLower(coalesce({V7}?['Reference'],'')),'deposit')", True]},
                                already("Deposit paid"), {"equals": [f"@empty({M}?['Deposit paid'])", False]}]},
         "actions": {"Tick_deposit_paid": sp_update(f"{ROW}?['ID']", "@" + dep_set, {}), **stage_acts,
+                    **jobs_sync("J7", f"{ROW}?['ID']", *jobs7, {"Stage_save": ["Succeeded"]}),
                     "Deposit_alert": teams(f"<p><b>Deposit paid: @{{{V7}?['Contact']?['Name']}}.</b> Stage moved to Build. Time to start.</p>", {"Stage_save": ["Succeeded", "Failed"]})},
         "else": {"actions": {}}},
     "If_final_invoice": {"type": "If", "runAfter": {"If_deposit_invoice": ["Succeeded", "Failed"]},
@@ -174,6 +228,8 @@ g_acts, g_last, g_body = safe_fields("GoLive", [
     ("Next action date", "formatDateTime(addDays(utcNow(),30),'yyyy-MM-dd')"),
     ("Notes", f"concat(coalesce({C(G8, 'Notes')},''),{NL},'[Go live processed ',{today_local},']')")], {"Email_how_to": ["Succeeded", "Failed"]})
 g_acts["GoLive_save"] = sp_update(f"{G8}?['ID']", g_body, {g_last: ["Succeeded"]})
+jobs8 = jobs_pairs(G8, "Live", "Send the 30 day results report", "formatDateTime(addDays(utcNow(),30),'yyyy-MM-dd')",
+                   extra=[("Go live date", f"coalesce({C(G8, 'Go live date')},formatDateTime(utcNow(),'yyyy-MM-dd'))")])
 howto = f"<p>Here is your how to guide: <a href=\"{HOWTO_URL}\">open the guide</a>.</p>" if HOWTO_URL else ""
 f8["For_each_go_live"] = {"type": "Foreach", "foreach": "@body('Go_lives_to_process')", "runAfter": {"Go_lives_to_process": ["Succeeded"]},
     "runtimeConfiguration": {"concurrency": {"repetitions": 1}}, "actions": {
@@ -186,6 +242,7 @@ f8["For_each_go_live"] = {"type": "Foreach", "foreach": "@body('Go_lives_to_proc
         f"<p>Hi @{{first(split(coalesce({C(G8, 'Contact name')},'there'),' '))}},</p><p>Your new setup is now live. Your final invoice is on its way from Xero in a separate email.</p>{howto}"
         f"<p>If anything looks off or you want a change, reply to this email or call me on 0409 265 711. I will check in again in 30 days with your results.</p>{SIG}", {"Email_invoice_from_Xero": ["Succeeded", "Failed"]}),
     **g_acts,
+    **jobs_sync("J8", f"{G8}?['ID']", *jobs8, {"GoLive_save": ["Succeeded"]}),
     "Go_live_alert": teams(f"<p><b>Go live processed: @{{{G8}?['Title']}}.</b> Final invoice created in Xero (@{{{final_amt}}} ex GST), client emailed, 30 day report set.</p>", {"GoLive_save": ["Succeeded"]}),
 }}
 package("xero/F8_Mediawise_Go_live.zip", "F8 Mediawise Go live", "NEEDS XERO: when Stage is Live, create and send the final Xero invoice, email the client, set the 30 day follow up",

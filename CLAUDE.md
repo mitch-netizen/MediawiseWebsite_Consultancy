@@ -115,6 +115,22 @@ The full plan is the "Mediawise Operating System: Automation Blueprint" doc: htt
 
 Column titles have NO brackets ("Proposal value ex GST", not "(ex GST)"). Every Choice column allows fill in values and has no fixed choices. Currency values arrive as numbers: never wrap them in `empty()` (Power Automate refuses it); use `greater(float(coalesce(x,0)),0)`.
 
+### Ops portal lists (built 28 Nov in code, not yet created in 365)
+
+Four Microsoft Lists next to Pipeline, which stays the sales record. Details and the page plan are in `ops/README.md` under "Ops portal". `ops/portal/setup-lists.js` creates them: Mitch signs in, opens the Pipeline list and pastes it into the browser Console. It is idempotent, never deletes, and was written without a signed in browser, so check its output. Status: lists NOT created yet (the cloud session had no signed in browser and the Microsoft 365 tools cannot create lists). Portal link: none yet.
+
+| List | Columns besides Title | Views |
+|---|---|---|
+| Mediawise Jobs | Offer (Choice), Stage (Won, Onboarding, Build, Live, Care plan, Done), Setup value ex GST (Currency), Care plan per month ex GST (Currency), Kickoff date, Go live date, Next action (text), Next action date, Client folder (text URL), Pipeline ID (Number, the Pipeline row id), Notes | Jobs board (grouped by Stage), Due in 3 days |
+| Mediawise Prospects | Contact name, Contact email, Industry, Location, Fit score (Number 1 to 5), Status (New, Drafted, Approved, Sent, Replied, Booked, Passed), Source, Draft first message, Notes | Awaiting approval |
+| Mediawise Agent Log | Agent (BDM, Marketing and research, Automation engineer), Details, Needs from Mitch (text), Resolved (Yes/No), Run date | Needs you |
+| Mediawise Tasks | Owner (Mitch, BDM, Marketing, Automation), Due date, Detail, Status (Open, Done) | Open for Mitch |
+
+- Seeded by the script: 7 open tasks for Mitch and 3 Agent Log rows for the planned agents (BDM weekly Monday, Marketing and research weekly Friday, Automation engineer daily). All three are NOT scheduled.
+- Portal page: a SharePoint page with five List web parts and quick links (Pipeline, Power Automate, Cloudflare Pages, Stripe), added as a Teams tab. List web parts only show lists on their own site, and a OneDrive personal site has no Site Pages library as far as I know, so the lists would need to live on the Mediawise team site. Mitch's call. If he moves them, change `SITE` in `setup-lists.js` and `JOBS_SITE` in `build.py`.
+- F7 (deposit paid, Stage Build) and F8 (go live, Stage Live) create or update the Jobs row, matched on Pipeline ID. If the Jobs list is missing they still do their Pipeline work and send a Teams message saying Jobs was not updated.
+- Jobs rows from before the list existed are picked up at go live, when F8 creates a row if none matches.
+
 ### Flows
 
 `ops/flows/build.py` generates the legacy import zips for every flow (`python3 build.py`, output in `ops/flows/dist/`, ignored by git). `python3 validate.py` checks them. `build.py --xero` builds F4, F7 and F8 once `XERO_TENANT_ID` is set. Full steps and test checklists are in `ops/README.md`. F5 is a spec only: `ops/specs/F5_Won.md`. SMS steps in F1 and F2 stay off until `SMS_PROVIDER` is set. Review link: set `REVIEW` in the config block.
@@ -141,7 +157,7 @@ Deploying an updated flow:
 | F6 Onboarding received | 0fd31e02-772a-4ad3-b065-1aece3980f20 | Working. Jotform webhook added 28 Nov and tested end to end (TEST Webhook Check: folder, answers file, access email all correct). |
 | F9 Results report | 41de8c8a-d3fe-459c-a097-50c718f72e58 | Working. Runs daily at 8:20am. Draft on day 30, then a client email with the report attached once "30 day result" is filled. |
 | F10 Monday numbers | 57c08d34-dc32-42e2-9800-d6eb26a95163 | Working. Column names fixed on 25 Nov. |
-| F4 Proposal sent, F7 Payment received, F8 Go live | F4 0de1d48b-b332-4dd3-8cc5-13fd9230fe07, F7 265c0cb1-d140-4c9f-bdb5-9240735615fa, F8 f7f08b96-c0cf-41fe-8b36-2ee126c2bf29 | Imported 28 Nov. First F4 test run failed: `empty()` on the Currency column. Fixed in code with F7's Yes fix (commit after 5b6bb14); the rebuilt zips still need importing with Update. F7 ON (old version). F4 and F8 OFF. Test row "TEST Xero Check" (pipeline id 4, Proposal sent, $100, Mitch's email) is waiting for the F4 retest. F8 creates an AUTHORISED invoice and emails it, so its live test needs Mitch's OK. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
+| F4 Proposal sent, F7 Payment received, F8 Go live | F4 0de1d48b-b332-4dd3-8cc5-13fd9230fe07, F7 265c0cb1-d140-4c9f-bdb5-9240735615fa, F8 f7f08b96-c0cf-41fe-8b36-2ee126c2bf29 | Imported 28 Nov. First F4 test run failed: `empty()` on the Currency column. Fixed in code with F7's Yes fix (commit after 5b6bb14); the rebuilt zips still need importing with Update. The rebuilt F7 and F8 also write to the Mediawise Jobs list (create the list first). F7 ON (old version). F4 and F8 OFF. Test row "TEST Xero Check" (pipeline id 4, Proposal sent, $100, Mitch's email) is waiting for the F4 retest. F8 creates an AUTHORISED invoice and emails it, so its live test needs Mitch's OK. F8 go live invoice is 50% of setup up to $5,000 and 30% above. |
 | F5 Won | | Spec only, `ops/specs/F5_Won.md`, needs Mitch's answers. |
 
 ### Automation to do
@@ -158,6 +174,7 @@ Deploying an updated flow:
   - Test Jotform submissions.
   - 28 Nov webhook test: OneDrive folder `Clients/TEST Webhook Check`, the "One thing before we kick off" email to Mitch, and its Jotform submission.
 - [x] **Imports done 28 Nov.** Six hardened flows updated and on. F4, F7, F8 created; F7 on, F4 and F8 off pending the dummy row test.
+- [ ] **Create the portal lists** by running `ops/portal/setup-lists.js` (see Ops portal lists above), decide whether they live in the OneDrive site or the team site, then build the portal page.
 - [ ] **Import the fixed F4, F7, F8 with Update**, then rerun F4 against the TEST Xero Check row, check the DRAFT quote and contact in Xero, delete both, delete the row, turn F4 on. F8 live test only with Mitch's OK.
 - [x] **Campaign page** /get-paid-faster-chat/ live on production with noindex; UTM tags reach the Jotform hidden fields (q9, q10, q11). Checked 28 Nov.
 - [ ] **Referral terms** drafted 28 Nov: https://claude.ai/artifact/Kf5iqQ1N9a7dusvfjAA58c (4 open questions for Mitch at the end).

@@ -9,6 +9,7 @@ Everything here makes the Power Automate flows for the Mediawise Pipeline. Nothi
 | `ops/flows/build.py` | Generates the legacy import zips. Settings you may need to change are in the CONFIG block at the top. |
 | `ops/flows/xero_flows.py` | F4, F7 and F8. Only built with `--xero`. Needs the Magnetism Xero connector. |
 | `ops/flows/validate.py` | Checks every zip. Run it after every build. |
+| `ops/portal/setup-lists.js` | Browser console script that creates the four portal lists, views, overdue colouring and seed rows. See "Ops portal" below. |
 | `ops/specs/F5_Won.md` | F5 is not built. This lists what is needed first. |
 | `ops/flows/dist/` | Build output (not committed). |
 
@@ -33,6 +34,9 @@ No secrets live in these files. The F6 webhook link is never stored here.
 | `XERO_TENANT_ID`, `XERO_ACCOUNT_CODE` | Xero flows only. Tenant ID appears once the connector is connected. |
 | `GO_LIVE_PCT`, `GO_LIVE_PCT_BIG`, `BIG_DEAL_OVER` | F8 go live invoice is the proposal value times 0.5 for setups up to $5,000, and times 0.3 above that (bundles pay 40% deposit, 30% at build complete, 30% at go live). The build complete invoice for big deals is raised by hand. |
 | `HOWTO_URL` | F8 how to guide link. Empty leaves it out. |
+| `JOBS_SYNC` | `True` (default): F7 and F8 also write to the Mediawise Jobs list. `False` builds them without those steps. |
+| `JOBS_LIST` | Name of the Jobs list. Default `Mediawise Jobs`. |
+| `JOBS_SITE` | Site the Jobs list lives in. Blank means the same OneDrive site as Pipeline. Set it if the lists move to the team site. |
 
 ## Deploy a changed flow (Update, not New)
 
@@ -92,9 +96,31 @@ Use a test business name that starts with TEST so the rows are easy to tidy afte
 
 **F7 Payment received** (needs Xero)
 - Mark a TEST invoice paid in Xero with Reference "Deposit - <business>". Within 2 hours Deposit paid ticks, Stage moves to Build, Teams alerts. Same with "Final - <business>" for Final paid.
+- Jobs list: the same run creates a row in Mediawise Jobs (Stage Build, Offer, Setup value, Care plan, Kickoff date, Client folder, Pipeline ID, Next action "Start the build"). Run it again after resetting Deposit paid: no second row appears, the existing one is updated.
+- With the Jobs list renamed or missing: the Pipeline update and the deposit alert still happen, and a second Teams message says the Jobs list was not updated.
 
 **F8 Go live** (needs Xero)
 - Set a TEST row to Live. A final invoice appears in Xero and is emailed from Xero, the client gets the go live email, Go live date and Next action date (+30 days) fill in.
+- Jobs list: the row for that Pipeline ID moves to Stage Live with the Go live date and Next action "Send the 30 day results report" (+30 days). If there was no Jobs row yet, F8 creates one, so jobs that started before the list existed are picked up at go live.
+
+## Ops portal (Microsoft 365, not a web app)
+
+Four Microsoft Lists next to Mediawise Pipeline. Pipeline stays the sales record.
+
+| List | Used for | Columns (besides Title) |
+|---|---|---|
+| Mediawise Jobs | Client delivery, one row per job | Offer, Stage (Won, Onboarding, Build, Live, Care plan, Done), Setup value ex GST, Care plan per month ex GST, Kickoff date, Go live date, Next action, Next action date, Client folder, Pipeline ID (Number), Notes |
+| Mediawise Prospects | BDM agent output | Contact name, Contact email, Industry, Location, Fit score (1 to 5), Status (New, Drafted, Approved, Sent, Replied, Booked, Passed), Source, Draft first message, Notes |
+| Mediawise Agent Log | What the agents did and need | Agent, Details, Needs from Mitch, Resolved (Yes/No), Run date |
+| Mediawise Tasks | Open items | Owner (Mitch, BDM, Marketing, Automation), Due date, Detail, Status (Open, Done) |
+
+Views: Jobs "Jobs board" (grouped by Stage) and "Due in 3 days"; Prospects "Awaiting approval"; Agent Log "Needs you"; Tasks "Open for Mitch". Next action date on Jobs and Due date on Tasks turn red when overdue (not for Done). Every Choice column allows fill in values, like Pipeline. For a true board layout, open the Jobs board view in Lists and use Add view, Board, Stage.
+
+**Create them.** Sign in as yourself, open the Pipeline list in the browser, open the Console, paste `ops/portal/setup-lists.js`. It skips anything that already exists, never deletes, seeds the 7 open tasks and the 3 planned agent rows (all marked NOT scheduled), and prints any step that failed. It was written without a signed in browser to test against, so check its output.
+
+**Jobs rows are written by F7 and F8** (see the checklists above). The match is on the Pipeline ID column. Both flows look the Jobs columns up by display title, so renaming a column in Jobs breaks only that field. Create the Jobs list before importing the new F7 and F8, otherwise they send the "Jobs list was not updated" Teams message each time.
+
+**Portal page.** A SharePoint page with five List web parts (one per view) and a Quick links web part (Pipeline, Power Automate, Cloudflare Pages, Stripe), added to the Mediawise team as a SharePoint tab. A List web part can only show lists from its own site, and a OneDrive personal site has no Site Pages library as far as I know, so for the page the four lists need to be on the Mediawise team site. That is the least maintenance option: the views update live and nothing needs republishing. To do it, change `SITE` at the top of `setup-lists.js` to the team site address, set `JOBS_SITE` in `build.py` to the same address and rebuild F7 and F8. Pipeline stays where it is and gets a quick link. Until the page exists, each list opens from Microsoft Lists on its own.
 
 ## What was changed in the review (summary)
 

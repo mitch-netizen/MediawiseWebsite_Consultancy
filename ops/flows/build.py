@@ -28,6 +28,12 @@ GO_LIVE_PCT = 0.5           # F8 go live invoice = proposal value x GO_LIVE_PCT 
 GO_LIVE_PCT_BIG = 0.3       # ...and for setups over BIG_DEAL_OVER (bundles: 40% deposit, 30% at build complete, 30% at go live).
 BIG_DEAL_OVER = 5000        # The build complete invoice for big deals is raised by hand.
 HOWTO_URL = ""              # F8: link to the client how to guide. Blank leaves the link out.
+# Mediawise Jobs list (client delivery). F7 and F8 create and update one row per job, matched on the Pipeline ID column.
+# JOBS_SITE is the site the list lives in. It is the OneDrive site (next to Pipeline) unless Mitch moves the lists
+# to the Mediawise team site for the portal page. Set JOBS_SYNC False to build F7 and F8 without the Jobs steps.
+JOBS_SYNC = True
+JOBS_LIST = "Mediawise Jobs"
+JOBS_SITE = ""              # blank means the same site as Pipeline (SITE)
 # ===========================================================================================
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -40,6 +46,7 @@ os.makedirs(OUT, exist_ok=True)
 
 SITE = "https://mediawisesolutions667-my.sharepoint.com/personal/mitch_mediawisesolutions_au"
 LIST = "Mediawise Pipeline"
+JOBS_SITE = JOBS_SITE or SITE
 ME = "mitch@mediawisesolutions.au"
 BOOK = "https://outlook.office.com/bookwithme/user/4a69841c8fbc4250b52e5adc7d888f46@mediawisesolutions.au?anonymous"
 SP, TM, OL = "shared_sharepointonline", "shared_teams", "shared_office365"
@@ -61,11 +68,11 @@ def col(item, title):
 def conn(api, op, params, after):
     return {"type": "OpenApiConnection", "runAfter": after, "inputs": {"host": {"connectionName": api, "operationId": op, "apiId": f"/providers/Microsoft.PowerApps/apis/{api}"}, "parameters": params, "authentication": "@parameters('$authentication')"}}
 
-def sp_get(uri, after):
-    return conn(SP, "HttpRequest", {"dataset": SITE, "parameters/method": "GET", "parameters/uri": uri, "parameters/headers": {"Accept": "application/json;odata=nometadata"}}, after)
+def sp_get(uri, after, site=None):
+    return conn(SP, "HttpRequest", {"dataset": site or SITE, "parameters/method": "GET", "parameters/uri": uri, "parameters/headers": {"Accept": "application/json;odata=nometadata"}}, after)
 
-def sp_update(id_expr, body_expr, after):
-    return conn(SP, "HttpRequest", {"dataset": SITE, "parameters/method": "POST", "parameters/uri": f"_api/web/lists/getbytitle('{LIST}')/items(@{{{id_expr}}})", "parameters/headers": {"Accept": "application/json;odata=nometadata", "Content-Type": "application/json;odata=nometadata", "IF-MATCH": "*", "X-HTTP-Method": "MERGE"}, "parameters/body": body_expr}, after)
+def sp_update(id_expr, body_expr, after, list_name=None, site=None):
+    return conn(SP, "HttpRequest", {"dataset": site or SITE, "parameters/method": "POST", "parameters/uri": f"_api/web/lists/getbytitle('{list_name or LIST}')/items(@{{{id_expr}}})", "parameters/headers": {"Accept": "application/json;odata=nometadata", "Content-Type": "application/json;odata=nometadata", "IF-MATCH": "*", "X-HTTP-Method": "MERGE"}, "parameters/body": body_expr}, after)
 
 def email(to, subject, body, after):
     return conn(OL, "SendEmailV2", {"emailMessage/To": to, "emailMessage/Subject": subject, "emailMessage/Body": body, "emailMessage/Importance": "Normal"}, after)
@@ -104,11 +111,16 @@ def column_map_actions(after):
         "Get_pipeline_items": sp_get(f"_api/web/lists/getbytitle('{LIST}')/items?$top=5000", {"Column_map": ["Succeeded"]}),
     }
 
-def safe_fields(prefix, pairs, after):
+SAFE_TYPES = ("Text", "Note", "Choice", "DateTime", "Boolean")
+JOBS_TYPES = SAFE_TYPES + ("Number", "Currency")   # Jobs list only: these values are sent as real numbers, never strings
+
+def safe_fields(prefix, pairs, after, cols="Get_list_columns", types=SAFE_TYPES):
     """Returns (actions, body_expr). Writes only to columns that exist on the list, matched by display name.
-    Only Text, Note, Choice, DateTime and Boolean columns are written. Number, Currency, Integer, URL,
+    By default only Text, Note, Choice, DateTime and Boolean columns are written. Number, Currency, Integer, URL,
     Lookup, MultiChoice and anything else are skipped, because a plain string would make SharePoint reject the
-    whole update (and with it the lead or the status change)."""
+    whole update (and with it the lead or the status change).
+    cols is the name of the action that read the list's columns. types is widened only for the Jobs list,
+    whose Number and Currency values are always passed as numbers (or null)."""
     vals = "json('{}')"
     for title, val in pairs:
         vals = f"setProperty({vals},'{title}',{val})"
@@ -116,7 +128,7 @@ def safe_fields(prefix, pairs, after):
     enc = f"string(createArray(outputs('{v}')?[item()?['Title']]))"
     acts = {
         v: {"type": "Compose", "runAfter": after, "inputs": "@" + vals},
-        f: {"type": "Query", "runAfter": {v: ["Succeeded"]}, "inputs": {"from": "@body('Get_list_columns')?['value']", "where": f"@and(contains(outputs('{v}'),item()?['Title']),contains(createArray('Text','Note','Choice','DateTime','Boolean'),item()?['TypeAsString']))"}},
+        f: {"type": "Query", "runAfter": {v: ["Succeeded"]}, "inputs": {"from": f"@body('{cols}')?['value']", "where": f"@and(contains(outputs('{v}'),item()?['Title']),contains(createArray({','.join(repr(t) for t in types)}),item()?['TypeAsString']))"}},
         sel: {"type": "Select", "runAfter": {f: ["Succeeded"]}, "inputs": {"from": f"@body('{f}')", "select": f"@concat('\"',item()?['InternalName'],'\":',substring({enc},1,sub(length({enc}),2)))"}},
     }
     return acts, sel, f"@json(concat('{{',join(body('{sel}'),','),'}}'))"
@@ -311,8 +323,8 @@ def sp_create_file(folder_expr, name_expr, body_expr, after):
     return conn(SP, "CreateFile", {"dataset": SITE, "folderPath": folder_expr, "name": name_expr, "body": body_expr}, after)
 def sp_get_file(path_expr, after):
     return conn(SP, "GetFileContentByPath", {"dataset": SITE, "path": path_expr, "inferContentType": True}, after)
-def sp_create_item(body_expr, after):
-    return conn(SP, "HttpRequest", {"dataset": SITE, "parameters/method": "POST", "parameters/uri": f"_api/web/lists/getbytitle('{LIST}')/items", "parameters/headers": {"Accept": "application/json;odata=nometadata", "Content-Type": "application/json;odata=nometadata"}, "parameters/body": body_expr}, after)
+def sp_create_item(body_expr, after, list_name=None, site=None):
+    return conn(SP, "HttpRequest", {"dataset": site or SITE, "parameters/method": "POST", "parameters/uri": f"_api/web/lists/getbytitle('{list_name or LIST}')/items", "parameters/headers": {"Accept": "application/json;odata=nometadata", "Content-Type": "application/json;odata=nometadata"}, "parameters/body": body_expr}, after)
 
 # ---------------- F6 Onboarding received ----------------
 def G(qid, name):

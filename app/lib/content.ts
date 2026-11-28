@@ -1,3 +1,5 @@
+export const LINKEDIN_URL = "https://www.linkedin.com/company/mediawise-solutions/";
+export const GOOGLE_PROFILE_URL = "https://maps.app.goo.gl/Hyzm9KtwaJgj87Lw8?g_st=ac";
 export const SITE_URL = "https://mediawisesolutions.au";
 export const BOOKING_URL =
   "https://outlook.office.com/bookwithme/user/4a69841c8fbc4250b52e5adc7d888f46@mediawisesolutions.au?anonymous";
@@ -160,6 +162,11 @@ export const offers: Offer[] = [
   },
 ];
 
+// Payment schedule text for a bundle deposit percentage.
+export function paymentSchedule(depositPercent: number) {
+  return depositPercent >= 50 ? "50% deposit, 50% on go live" : `${depositPercent}% deposit, 30% at build complete, 30% on go live`;
+}
+
 export const bundles = [
   { name: "Starter", includes: "01 and 03", price: 2950, carePlan: 295, saving: 450, deposit: 1475, depositPercent: 50, payUrl: "https://book.stripe.com/4gMdRbeHl9Wu1CPccZf7i07" },
   { name: "Growth", includes: "01, 02 and 03", price: 5450, carePlan: 445, saving: 900, deposit: 2180, depositPercent: 40, payUrl: "https://book.stripe.com/4gM5kFar5c4C1CPfpbf7i08" },
@@ -175,10 +182,24 @@ export const offerPayments: Record<string, { deposit: number; url: string }> = {
   "monday-morning-numbers": { deposit: 1225, url: "https://book.stripe.com/aFa5kF8iX0lU95h4Kxf7i06" },
 };
 
+// Stripe payment links for monthly care plans (GST added at checkout, 3 month minimum).
+// Not shown on the public site: send the link at go live, because it charges straight away.
+export const carePlanLinks: Record<string, { monthly: number; url: string }> = {
+  "never-miss-an-enquiry": { monthly: 195, url: "https://buy.stripe.com/00waEZ2YDgkSbdp0uhf7i0a" },
+  "quotes-out-the-same-day": { monthly: 195, url: "https://buy.stripe.com/00wbJ342H0lUftF1ylf7i0b" },
+  "get-paid-faster": { monthly: 145, url: "https://buy.stripe.com/3cIeVf2YDfgOgxJ7WJf7i0c" },
+  "onboarding-on-autopilot": { monthly: 195, url: "https://buy.stripe.com/14AeVf0Qv5GeepBdh3f7i0d" },
+  "monday-morning-numbers": { monthly: 295, url: "https://buy.stripe.com/14A28tar59Wua9lccZf7i0e" },
+  starter: { monthly: 295, url: "https://buy.stripe.com/7sYeVffLp2u26X990Nf7i0f" },
+  growth: { monthly: 445, url: "https://buy.stripe.com/cNifZjfLpecKbdp4Kxf7i0g" },
+  full: { monthly: 695, url: "https://buy.stripe.com/9B614p7eT7Om5T5dh3f7i0h" },
+};
+
 export type Area = {
   slug: string;
   name: string;
   seoTitle: string;
+  seoDescription: string;
   stages: string;
   tone: "gold" | "teal" | "blue";
   headline: string;
@@ -192,7 +213,8 @@ export const areas: Area[] = [
   {
     slug: "marketing",
     name: "Marketing",
-    seoTitle: "Marketing Consultant and Fractional Marketing Lead, Central Queensland",
+    seoTitle: "Marketing Consultant, Central Queensland",
+    seoDescription: "Marketing strategy, campaigns and part time marketing leadership for regional businesses, with every dollar tied to enquiries and revenue.",
     stages: "Get found",
     tone: "gold",
     headline: "Marketing that's judged on the work it brings in.",
@@ -215,7 +237,8 @@ export const areas: Area[] = [
   {
     slug: "revenue-and-sales",
     name: "Revenue and sales",
-    seoTitle: "Sales and Revenue Consultant for Regional Businesses",
+    seoTitle: "Sales and Revenue Consultant, Regional QLD",
+    seoDescription: "Revenue diagnostics, sales process and team coaching for regional businesses, from a leader who has carried a target and led a team of 12.",
     stages: "Win the work",
     tone: "teal",
     headline: "Win more of the work you're already paying to attract.",
@@ -238,7 +261,8 @@ export const areas: Area[] = [
   {
     slug: "systems-and-automation",
     name: "Systems and automation",
-    seoTitle: "Business Automation and Power Automate Consultant, Queensland",
+    seoTitle: "Power Automate Consultant, Queensland",
+    seoDescription: "Fixed price Power Automate builds and custom workflows that take the copy and paste out of your week. Live in 2 to 3 weeks.",
     stages: "Deliver it and get paid",
     tone: "blue",
     headline: "Deliver and bill without the double handling.",
@@ -277,7 +301,7 @@ export const faqs = [
   },
   {
     q: "How much does it cost?",
-    a: "The five automation builds have a fixed scope and a fixed price, from $1,450 to $2,950 plus GST, with optional monthly care plans. All other work, including marketing, sales, diagnostics and part time leadership, is bespoke and quoted to suit the business.",
+    a: "The five automation builds have a fixed scope and a fixed price, from $1,450 to $2,950 plus GST (bundles up to $9,750), with optional monthly care plans. All other work, including marketing, sales, diagnostics and part time leadership, is bespoke and quoted to suit the business.",
   },
   {
     q: "How long does an automation build take?",

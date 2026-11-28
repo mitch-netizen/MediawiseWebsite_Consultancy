@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { pageMeta } from "../lib/seo";
 import Link from "next/link";
-import { offers, bundles, offerPayments, aud } from "../lib/content";
+import { offers, bundles, offerPayments, aud, paymentSchedule } from "../lib/content";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = pageMeta("/pricing", "Automation Pricing", "Fixed setup prices for the five automation builds, bundles, optional care plans and payment terms. All prices in AUD plus GST. Marketing and sales work is bespoke and quoted to suit.");
+export const metadata: Metadata = pageMeta("/pricing", "Automation Pricing", "Fixed setup prices for the five automation builds, bundles, care plans and payment terms. AUD plus GST. Marketing and sales work is quoted to suit.");
 
 export default function Pricing() {
   return (
@@ -23,7 +23,7 @@ export default function Pricing() {
           <div className="table-wrap">
             <table>
               <thead>
-                <tr><th>Offer</th><th>Setup</th><th>Care plan</th><th>Live in</th><th>Book</th></tr>
+                <tr><th>Offer</th><th>Setup (+ GST)</th><th>Care plan (+ GST)</th><th>Live in</th><th>Book</th></tr>
               </thead>
               <tbody>
                 {offers.map((o) => (
@@ -32,7 +32,7 @@ export default function Pricing() {
                     <td>{aud(o.price)}</td>
                     <td>{aud(o.carePlan)} a month</td>
                     <td>{o.weeks} weeks</td>
-                    <td><a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer" style={{ fontSize: 14, padding: "8px 16px", minHeight: 40, whiteSpace: "nowrap" }}>Pay {aud(offerPayments[o.slug].deposit)} deposit</a></td>
+                    <td><a className="btn btn-primary" href={offerPayments[o.slug].url} rel="noopener noreferrer" aria-label={`Pay ${aud(offerPayments[o.slug].deposit)} + GST deposit for ${o.name}`} style={{ fontSize: 14, padding: "8px 16px", minHeight: 40, whiteSpace: "nowrap" }}>Pay {aud(offerPayments[o.slug].deposit)} + GST deposit</a></td>
                   </tr>
                 ))}
               </tbody>
@@ -45,10 +45,10 @@ export default function Pricing() {
               <div key={b.name} className={`card${i === 2 ? " featured" : ""}`}>
                 <span className="offer-num">{b.includes}</span>
                 <h3>{b.name}</h3>
-                <div className="price-tag" style={{ marginTop: 0 }}>{aud(b.price)}</div>
-                <p className="muted" style={{ marginTop: 12 }}>Save {aud(b.saving)} on setup. Care plan {aud(b.carePlan)} a month.</p>
-                <a className="btn btn-primary" href={b.payUrl} rel="noopener noreferrer" style={{ marginTop: 20 }}>Pay {aud(b.deposit)} deposit</a>
-                <p className="muted small" style={{ marginTop: 8 }}>{b.depositPercent}% deposit, plus GST, books your start date.</p>
+                <div className="price-tag" style={{ marginTop: 0 }}>{aud(b.price)} <span className="small muted">+ GST</span></div>
+                <p className="muted" style={{ marginTop: 12 }}>Save {aud(b.saving)} on setup. Care plan {aud(b.carePlan)} + GST a month.</p>
+                <a className="btn btn-primary" href={b.payUrl} rel="noopener noreferrer" aria-label={`Pay ${aud(b.deposit)} + GST deposit for the ${b.name} bundle`} style={{ marginTop: 20 }}>Pay {aud(b.deposit)} + GST deposit</a>
+                <p className="muted small" style={{ marginTop: 8 }}>{paymentSchedule(b.depositPercent)}. Plus GST. The deposit books your start date.</p>
               </div>
             ))}
           </div>
@@ -69,7 +69,7 @@ export default function Pricing() {
             <p className="muted small">3 month minimum, then month to month with 30 days notice. Extra work is $150 an hour.</p>
           </div>
           <div>
-            <h2>Payment</h2>
+            <h2>Automation payment terms</h2>
             <ul className="checks">
               <li>50% deposit to book your start date, 50% on go live</li>
               <li>Bundles over $5,000: 40% deposit, 30% at build complete, 30% on go live</li>

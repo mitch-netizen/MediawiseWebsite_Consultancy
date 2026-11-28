@@ -1,0 +1,60 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm install:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python3 build.py:*)",
+      "Bash(python3 validate.py:*)",
+      "Bash(python3 ops/flows/build.py:*)",
+      "Bash(curl -sI:*)",
+      "Bash(ls:*)",
+      "mcp__Microsoft_365__outlook_email_search",
+      "mcp__Microsoft_365__outlook_calendar_search",
+      "mcp__Microsoft_365__sharepoint_search",
+      "mcp__Microsoft_365__sharepoint_folder_search",
+      "mcp__Microsoft_365__read_resource",
+      "mcp__Microsoft_365__get_me",
+      "mcp__Jotform__fetch",
+      "mcp__Jotform__list_submissions",
+      "mcp__Jotform__search",
+      "mcp__Stripe__stripe_api_read",
+      "mcp__Stripe__stripe_api_search",
+      "mcp__Stripe__stripe_api_details",
+      "mcp__Stripe__list_available_accounts_or_orgs",
+      "mcp__Vercel__list_projects",
+      "mcp__Vercel__get_project",
+      "mcp__Vercel__list_deployments",
+      "mcp__Vercel__get_deployment",
+      "mcp__github__list_branches",
+      "mcp__github__get_commit",
+      "mcp__github__list_commits",
+      "mcp__github__pull_request_read"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "mcp__Stripe__stripe_api_write",
+      "mcp__Microsoft_365__outlook_send_mail",
+      "mcp__Microsoft_365__outlook_send_draft",
+      "mcp__Microsoft_365__teams_send_channel_message",
+      "mcp__Microsoft_365__teams_send_chat_message",
+      "mcp__Microsoft_365__sharepoint_delete_item",
+      "mcp__Microsoft_365__outlook_delete_event",
+      "mcp__Microsoft_365__outlook_batch_delete_messages",
+      "mcp__Jotform__edit_form",
+      "mcp__Jotform__delete_asset"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}

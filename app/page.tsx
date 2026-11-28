@@ -27,7 +27,7 @@ export default function Home() {
             I&apos;m Mitch Harris. I help businesses turning over $1M to $20M tighten the chain from first enquiry to cash in the bank.
           </p>
           <div className="btn-row">
-            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat</a>
+            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book a 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
             <Link className="text-link" href="/how-it-works">See how it works</Link>
           </div>
 

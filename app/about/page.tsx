@@ -4,7 +4,7 @@ import CtaBand from "../components/CtaBand";
 import JsonLd from "../components/JsonLd";
 import { SITE_URL } from "../lib/content";
 
-export const metadata: Metadata = pageMeta("/about", "About Mitch Harris, Marketing and Revenue Consultant", "Mitch Harris spent a decade in commercial leadership, including General Sales Manager at Southern Cross Austereo across Rockhampton, Gladstone and Emerald. He founded Mediawise Solutions in 2023.");
+export const metadata: Metadata = pageMeta("/about", "About Mitch Harris, Revenue Consultant", "Mitch Harris spent a decade in commercial leadership, including General Sales Manager at Southern Cross Austereo. He founded Mediawise Solutions in 2023.");
 
 export default function About() {
   return (
@@ -58,7 +58,7 @@ export default function About() {
           </ul>
         </div>
       </section>
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "ProfilePage", url: `${SITE_URL}/about`, mainEntity: { "@id": `${SITE_URL}/#mitch-harris` } }} />
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "ProfilePage", url: `${SITE_URL}/about/`, mainEntity: { "@id": `${SITE_URL}/#mitch-harris` } }} />
       <CtaBand />
     </>
   );

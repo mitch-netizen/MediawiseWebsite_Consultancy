@@ -294,7 +294,7 @@ td a { color: var(--teal-ink); font-weight: 600; }
 .site-footer { background: var(--navy-deep); padding: 72px 0 40px; }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
 .footer-grid img { height: 56px; width: auto; margin-bottom: 18px; }
-.footer-grid h4 { font-family: var(--font-display), Georgia, serif; font-weight: 400; font-size: 19px; margin: 0 0 14px; color: var(--gold); }
+.footer-grid .footer-h { font-family: var(--font-display), Georgia, serif; font-weight: 400; font-size: 19px; margin: 0 0 14px; color: var(--gold); }
 .footer-grid ul { list-style: none; padding: 0; margin: 0; }
 .footer-grid li { margin-bottom: 8px; }
 .footer-grid a { text-decoration: none; color: var(--mist); }
@@ -328,3 +328,9 @@ td a { color: var(--teal-ink); font-weight: 600; }
 .faq summary::after { content: ""; position: absolute; right: 8px; top: 30px; width: 10px; height: 10px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); transform: rotate(45deg); transition: transform 0.2s ease; }
 .faq details[open] summary::after { transform: rotate(-135deg); top: 36px; }
 .faq details p { color: var(--body); margin: 0 0 24px; }
+
+.h3-style { font-weight: 400; font-size: 26px; line-height: 1.2; letter-spacing: -0.005em; margin-bottom: 10px; max-width: none; font-variation-settings: "opsz" 36; }
+.step-num.tone-gold { color: var(--tone-ink); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: 16px; top: -64px; z-index: 100; background: var(--navy); color: #fff; padding: 12px 18px; border-radius: 6px; text-decoration: none; font-weight: 500; }
+.skip-link:focus { top: 12px; }

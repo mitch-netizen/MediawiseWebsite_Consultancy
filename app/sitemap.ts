@@ -3,7 +3,7 @@ export const dynamic = "force-static";
 import { SITE_URL, offers, areas } from "./lib/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const now = new Date("2026-11-26");
   const entry = (path: string, priority: number, changeFrequency: "weekly" | "monthly" = "monthly") => ({
     url: `${SITE_URL}${path}/`.replace(/\/\/$/, "/"),
     lastModified: now,

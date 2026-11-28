@@ -256,7 +256,7 @@ When writing about services, tie them to commercial outcomes:
 ## Quick Links & References
 
 - **Website:** https://mediawisesolutions.com.au/
-- **Contact:** mitch.harris@outlook.com.au
+- **Contact:** mitch@mediawisesolutions.au
 - **Phone:** +61 409 265 711
 - **LinkedIn:** linkedin.com/in/mitch-harris-consultant
 

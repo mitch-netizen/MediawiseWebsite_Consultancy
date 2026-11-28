@@ -5,7 +5,7 @@ import { BOOKING_URL, faqs } from "../lib/content";
 import JsonLd from "../components/JsonLd";
 import CtaBand from "../components/CtaBand";
 
-export const metadata: Metadata = pageMeta("/how-it-works", "How It Works and FAQs", "How working with Mediawise Solutions runs: a 20 minute chat, a look at where the business is leaking, then the fixes. Plus answers to common questions on pricing, tools and timing.");
+export const metadata: Metadata = pageMeta("/how-it-works", "How It Works and FAQs", "How working with Mediawise runs: a 20 minute chat, a look at where the business leaks, then the fixes. Plus FAQs on pricing, tools and timing.");
 
 const steps = [
   {
@@ -58,7 +58,7 @@ export default function HowItWorks() {
             ))}
           </ol>
           <div className="btn-row">
-            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book the 20 minute chat</a>
+            <a className="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Book the 20 minute chat<span className="sr-only"> (opens in a new tab)</span></a>
             <Link className="btn btn-ghost" href="/pricing">See pricing</Link>
           </div>
         </div>
